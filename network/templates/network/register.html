@@ -1,0 +1,92 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+</head>
+
+<body style="background-color: #5372f8;">
+    <div class="container p-0" style="height: 100vh; max-width: 100%;">
+        <div class="row m-0" style="height: 100%; width: 100%;">
+            <!-- <div class="col-12" style="background-color: #5372f8;"></div> -->
+            <div class="col-4 align-self-center register-form ">
+                <div class="row-col">
+                    <h2 class="text-center" style="font-weight: 400">Register</h2>
+
+                    {% if message %}
+                    <div>{{ message }}</div>
+                    {% endif %}
+
+                    <form action="{% url 'register' %}" method="post" id="register-form">
+                        {% csrf_token %}
+                        <div class="form-page">
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="first-name">First Name</label>
+                                    <input class="form-control" autofocus type="text" name="first_name">
+                                </div>
+                                <div class="form-group col">
+                                    <label for="last-name">Last Name</label>
+                                    <input class="form-control" autofocus type="text" name="last_name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input class="form-control" type="text" name="username" placeholder="Username">
+                            </div>
+                            <button class="btn btn-primary" type="button" value="Next" id="nextButton">Next</button>
+                        </div>
+                        <div class="form-page">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input class="form-control" type="email" name="email" placeholder="Email Address">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input class="form-control" type="password" name="password" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmation">Confirm Password</label>
+                                <input class="form-control" type="password" name="confirmation"
+                                    placeholder="Confirm Password">
+                            </div>
+                            <button class="btn btn-primary" type="button" value="Back" id="backButton">Back</button>
+                            <input class="btn btn-primary" type="submit" value="Register" id="register">
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- <hr>
+                Already have an account? <a href="{% url 'login' %}">Log In here.</a> -->
+                <div class="register-footer">
+                    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const slideForm = document.querySelector('#register-form');
+        const formContainer = document.querySelector('.register-form');
+        const registerFooter = document.querySelector('.register-footer');
+        const nextButton = document.querySelector('#nextButton');
+        nextButton.onclick = function leftSlide() {
+            slideForm.style.marginLeft = "-100%";
+            formContainer.style.height = '76.5%';
+            registerFooter.style.marginTop = "0";
+            // slidePage.style.marginRight = "50%";
+        }
+
+        const backButton = document.querySelector('#backButton');
+        backButton.onclick = function rightSlide() {
+            slideForm.style.marginLeft = "0";
+            formContainer.style.height = '65.9%';
+            registerFooter.style.marginTop = "-15%";
+            
+        }
+    </script>
+</body>

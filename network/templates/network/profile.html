@@ -1,0 +1,341 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<!-- Profile Followers Modal List -->
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Followers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if pFollowersList|length == 0 %}
+                <div>{{pFollowersList|length}} followers</div>
+                {% else %}
+                {% for follower in pFollowersList %}
+                <div class="follower">
+                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
+                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
+                        class="commentProfilePic">
+                    <span><a href="{% url 'profile' follower.username %}"> {{follower.username}} </a></span>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Following Modal List -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Following</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if pFollowingList|length == 0 %}
+                <div>{{pFollowingList|length}} following</div>
+                {% else %}
+                {% for follower in pFollowingList %}
+                <div class="following">
+                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
+                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
+                        class="commentProfilePic">
+                    <span><a href="{% url 'profile' follower.username %}"> {{follower.username}} </a></span>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Post/Comment Confirmation Modal -->
+<div class="modal fade" id="delConfirmModal" tabindex="-1" aria-labelledby="delConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delConfirmModalLabel">Followers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure want to delete? Items deleted cannot be restored.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="confirmDelete">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Post Likes Modal List -->
+<!-- <div class="modal fade" id="postLikesModal" tabindex="-1" aria-labelledby="postLikesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postLikesModalLabel">Followers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% for like in post.allLikes %}
+                <div class="follower">
+                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
+                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
+                        class="commentProfilePic">
+                    <span><a href="{% url 'profile' follower.username %}"> {{follower.username}} </a></span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- Main Body -->
+
+<div class="container" style="max-width: 90%;">
+    <div class="row p-0 mt-5">
+        <div class="col-md-9">
+            <div class="d-flex border boder-dark pb-3"
+                style="min-height: 50px; background-color: white; border-radius: 3px; box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
+                <div class="col">
+                    <div class="row" style="background-color: lightblue; height: 200px;">
+                        <!-- <img src="" alt="" style="background-color: lightblue"> -->
+                    </div>
+                    <div class="d-flex">
+                        <div class="d-flex"
+                            style="z-index: 50; background-color: lightpink; width: 150px; border-radius: 125px; height: 150px; margin-top: -90px; border: 5px solid white; margin-bottom: 5px; box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
+                            <!-- <img src="" alt="" style="background-color: lightpink; width: 250px; border-radius: 125px; height: 250px;"> -->
+                        </div>
+                        <div class="align-self-end ml-auto">
+                            {% csrf_token %}
+                            {% if followedStatus %}
+                            <button class="btn btn-primary" id="followButton">Unfollow</button>
+                            {% else %}
+                            <button class="btn btn-primary" id="followButton">Follow</button>
+                            {% endif %}
+                            <button class="btn btn-light border border-dark">Message</button>
+                        </div>
+
+                    </div>
+                    <div class="mb-3">
+                        <span style="font-size: 20px; font-weight: 500;">{{profile.first_name|capfirst}}
+                            {{profile.last_name|capfirst}}</span>
+                        <br>
+                        <span id="profileUsername">{{profile.username|capfirst}}</span>
+                        <br>
+                        United Arab Emirates
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex border border-alert py-3 my-3"
+                style="background-color: white; border-radius: 3px; box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
+                <div class="col">
+                    <span style="font-size: 19px;">About</span>
+                    <div class="d-flex" style="height: 70px; background-color: lightgrey; margin-top: 10px"></div>
+                </div>
+            </div>
+
+            <div class="d-flex my-3">
+                <div class="col">
+                    <div class="row text-center justify-content-between">
+                        <div class="col-6 py-3 border border-alert"
+                            style="max-width: 49%; background-color: white; border-radius: 3px; box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
+                            <div style="font-size: 19px;">Followers</div>
+                            <div class="fCountStyle" style="font-size: 2.6rem" id="followerCount" data-toggle="modal"
+                                data-target="#exampleModal1">
+                                {{profile.followerCount}}</div>
+                        </div>
+                        <div class="col-6 py-3 border border-alert"
+                            style="max-width: 49%; background-color: white; border-radius: 3px; box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
+                            <div style="font-size: 19px;">Following</div>
+                            <div class="fCountStyle" style="font-size: 2.6rem" id="followingCount" data-toggle="modal"
+                                data-target="#exampleModal2">
+                                {{profile.followingCount}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex border border-alert py-3 my-3"
+                style="background-color: white; border-radius: 3px; box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;"">
+                <div class=" col">
+                <span style="font-size: 19px;">Posts</span>
+
+                <div id="postsDisplay">
+                    {% for post in page_obj %}
+                    <div class="d-flex border border-alert py-3 my-3 postContaine" id="postContainer-{{post.id}}">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-1">
+                                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
+                                        style="object-fit: contain; width: 100%; border-radius: 50px;"
+                                        class="commentProfilePic">
+                                </div>
+                                <div class="col-11 pl-0 align-self-end">
+                                    <span style="font-size: 19px;" id="postUser" style="display: inline-block;">
+                                        <a href="{% url 'profile' post.user %}"
+                                            class="userProfileLink">{{post.user|capfirst}}</a>
+                                    </span>
+                                    <div class="dropdown d-inline-flex" style=" float:right">
+                                        <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right"
+                                            aria-labelledby="dropdownMenuButton">
+                                            <span class="editButton dropdown-item" data-item="post"
+                                                data-id="post-{{post.id}}"><i class="far fa-edit"></i>&nbsp;Edit</span>
+                                            <span class="deleteButton dropdown-item" data-id="post-{{post.id}}"
+                                                data-item="post" id="deleteButton-{{post.id}}">&nbsp;<i
+                                                    class="fas fa-times"></i>&nbsp;&nbsp;Delete</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="postContent" id="post-{{post.id}}">{{post.content}}</div>
+                                </div>
+                            </div>
+                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="numLikes-{{post.id}}">
+                                {{post.allLikes|length}} likes
+                            </div>
+                            <div class="row optionRow" id="optionRow-{{post.id}}">
+                                {% if request.user.username in post.allLikes %}
+                                <span class="options likeButton ml-3" data-id="post-{{post.id}}" style="color: #007bff"
+                                    data-item="post">
+                                    <i class="far fa-thumbs-up"></i> Like</span>
+                                {% else %}
+                                <span class="options likeButton ml-3" data-id="post-{{post.id}}" data-item="post">
+                                    <i class="far fa-thumbs-up"></i> Like</span>
+                                {% endif %}
+                                <span class="options" data-id="post-{{post.id}}"><i class="far fa-comment"></i>
+                                    Comment</span>
+                                <span class="options" data-id="post-{{post.id}}"><i class="fas fa-share"></i>
+                                    Share</span>
+                                {% if post.user == request.user %}
+                                <span class="options editButton" data-item="post" data-id="post-{{post.id}}"><i
+                                        class="far fa-edit"></i>
+                                    Edit</span>
+                                {% endif %}
+                            </div>
+                            <!-- Comments for each post -->
+                            <div class="commentsDisplay" id="commentsDisplay-{{post.id}}">
+                                {% for comment in post.comments %}
+                                <div class="d-flex py-3 my-3 mx-3 commentContainer"
+                                    id="commentContainer-{{comment.id}}">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-1">
+                                                <img src="{% static 'network/images/defaultAvatar.png' %}"
+                                                    alt="profile-pic"
+                                                    style="object-fit: contain; width: 80%; border-radius: 50px;"
+                                                    class="commentProfilePic">
+                                            </div>
+                                            <div class="col-11 pl-0 align-self-end ml-n2">
+                                                <span style="font-size: 19px;" id="postUser"
+                                                    style="display: inline-block;">
+                                                    <a href="{% url 'profile' comment.user.username %}"
+                                                        class="userProfileLink">{{comment.user.username|capfirst}}</a>
+                                                </span>
+                                                {% if comment.user == request.user %}
+                                                <div class="dropdown d-inline-flex" style=" float:right">
+                                                    <button class="btn" type="button" id="dropdownMenuButton"
+                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right"
+                                                        aria-labelledby="dropdownMenuButton">
+                                                        <span class="editButton dropdown-item" data-item="comment"
+                                                            data-id="comment-{{comment.id}}"><i
+                                                                class="far fa-edit"></i>&nbsp;Edit</span>
+                                                        <span class="deleteButton dropdown-item"
+                                                            data-id="comment-{{comment.id}}" data-item="comment"
+                                                            id="deleteButton-{{comment.id}}" data-postID="post">&nbsp;<i
+                                                                class="fas fa-times"></i>&nbsp;&nbsp;Delete</span>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="postContent" id="comment-{{comment.id}}">{{comment.comment}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="numLikes" data-numLikes="{{comment.allLikes|length}}"
+                                            data-id="numLikes-{{comment.id}}" data-toggle="modal"
+                                            data-target="#postLikesModal" id="commentNumLikes-{{comment.id}}">
+                                            {{comment.allLikes|length}}
+                                            likes</div>
+                                        <div class="row optionRow" id="optionRow-{{comment.id}}">
+                                            {% if request.user.username in comment.allLikes %}
+                                            <span class="options likeButton ml-3" data-id="comment-{{comment.id}}"
+                                                style="color: #007bff" data-item="comment">
+                                                <i class="far fa-thumbs-up"></i> Like</span>
+                                            {% else %}
+                                            <span class="options likeButton ml-3" data-id="comment-{{comment.id}}"
+                                                data-item="comment">
+                                                <i class="far fa-thumbs-up"></i> Like</span>
+                                            {% endif %}
+                                            <span class="options" data-id="comment-{{comment.id}}"><i
+                                                    class="far fa-comment"></i>
+                                                Reply</span>
+                                            <span class="options editButton" data-item="comment"
+                                                data-id="comment-{{comment.id}}"><i class="far fa-edit"></i> Edit</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="row">
+                                <div class="col my-3">
+                                    <input class="comment" data-postID="{{post.id}}" type="text"
+                                        placeholder="Write a comment..."
+                                        style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3" style="background-color: lightgreen">
+        <span>People you may know:</span>
+    </div>
+
+</div>
+</div>
+{% endblock %}
