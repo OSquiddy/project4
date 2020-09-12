@@ -17,9 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     if (document.querySelectorAll('.deleteButton') != undefined)
         document.querySelectorAll('.deleteButton').forEach(post => post.onclick = function () { deleteItem(this) });
-
-
-
+    if (document.querySelector('#upload') != undefined)
+        document.querySelector('#upload').onclick = function () { upload() };
 
 })
 
@@ -148,6 +147,19 @@ function follow() {
                     let followerCount = document.querySelector('#followerCount').innerHTML;
                     followerCount++;
                     document.querySelector('#followerCount').innerHTML = followerCount;
+                    let newFollower = document.createElement('div');
+                    const user = result.user;
+                    document.querySelector('#numFollowers').style.display = 'none';
+                    const img = document.querySelector('img').src;
+                    newFollower.innerHTML = `
+                    <div class="follower" id="follower-${user.id}">
+                    <img src="${img}" alt="profile-pic"
+                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
+                        class="commentProfilePic">
+                    <span><a href="/${user.username}"> ${user.username} </a></span>
+                    </div>
+                    `;
+                    document.querySelector('#followersModalBody').append(newFollower);
                 }
             }
             else if (result.message === 'Unfollowed successfully') {
@@ -156,6 +168,10 @@ function follow() {
                     let followerCount = document.querySelector('#followerCount').innerHTML;
                     followerCount--;
                     document.querySelector('#followerCount').innerHTML = followerCount;
+                    const user = result.user;
+                    document.querySelector(`#follower-${user.id}`).remove();
+                    if (followerCount == 0)
+                        document.querySelector('#numFollowers').style.display = 'block';
                 }
             }
         })
@@ -425,4 +441,32 @@ function deleteItem(post) {
             .catch(error => console.log(error));
         document.querySelector(`#${post.dataset.item}Container-${id}`).remove();
     }
+}
+
+function upload() {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    let image = document.querySelector('#output');
+    imgURL = image.src;
+    let user = document.querySelector('#upload').dataset.user;
+    // fd = new FormData()
+    // fd.append()
+    // fetch(`/upload/${user}`, {
+    //    method: 'POST',
+    //    mode: 'same-origin',
+    //    headers: {
+    //        "X-CSRFToken" : csrftoken
+    //    },
+    //    body: JSON.stringify({
+    //        image: image,
+    //        imgURL : imgURL
+    //    }) 
+    // })
+    // .then(response => response.json())
+    // .then(result => {
+    //     console.log(result);
+    //     document.querySelector('#profilePic').src = imgURL;
+    // })
+    // .catch(error => console.log(error));
+    document.querySelector('#profilePic').src = imgURL;
+    // return false;
 }

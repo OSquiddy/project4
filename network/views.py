@@ -9,6 +9,7 @@ from django.db.models import Q
 import json
 
 from .models import User, Post, Comment
+from .forms import ImageUploadForm
 from . import utils
 
 
@@ -22,6 +23,11 @@ def index(request):
     paginator = Paginator(postsList, 10)
     page_number =  request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # Randomly selected profiles
+    pYouMayKnow = utils.getRandomProfiles()
+    pAlsoViewed = utils.getRandomProfiles()
+    
     if request.method == 'POST':
         print("POST request has been called")
         data = json.loads(request.body)
@@ -32,7 +38,9 @@ def index(request):
                              }, status=200, safe=False)
     return render(request, "network/index.html", {
         "postsList" : postsList,
-        "page_obj" : page_obj
+        "page_obj" : page_obj,
+        "pYouMayKnow" : pYouMayKnow,
+        "pAlsoViewed" : pAlsoViewed
     })
 
     
@@ -60,13 +68,28 @@ def profile(request, name):
     page_number =  request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
+    # Randomly selected profiles
+    pYouMayKnow = utils.getRandomProfiles()
+    pAlsoViewed = utils.getRandomProfiles()
+    
+    # Form to upload image
+    form = ImageUploadForm()
+    if request.method == "POST":
+        form = ImageUploadForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+        print(request.FILES, request.POST)
+    
     return render(request, "network/profile.html", {
         "profile" : profile,
         "followedStatus" : followedStatus,
         "postsList" : postsList,
         "page_obj" : page_obj,
         "pFollowingList" : profileFollowingList,
-        "pFollowersList" : profileFollowersList
+        "pFollowersList" : profileFollowersList,
+        "pYouMayKnow" : pYouMayKnow,
+        "pAlsoViewed" : pAlsoViewed,
+        "form" : form
     })
 
 @login_required
@@ -84,9 +107,16 @@ def followingPage(request, username):
     paginator = Paginator(postsList, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # Randomly selected profiles
+    pYouMayKnow = utils.getRandomProfiles()
+    pAlsoViewed = utils.getRandomProfiles()
+    
     return render(request, "network/following.html", {
         "postsList" : postsList,
-        "page_obj" : page_obj
+        "page_obj" : page_obj,
+        "pYouMayKnow" : pYouMayKnow,
+        "pAlsoViewed" : pAlsoViewed
     })
     
 def login_view(request):
@@ -161,11 +191,11 @@ def follow(request, username):
         
         followTarget.followers.add(user)
         user.following.add(followTarget)
-        return JsonResponse({ "message": "Followed successfully" }, status=200)
+        return JsonResponse({ "message": "Followed successfully", "user" : user.serialize() }, status=200)
     elif buttonValue == 'Unfollow':
         followTarget.followers.remove(user)
         user.following.remove(followTarget)
-        return JsonResponse({"message" : "Unfollowed successfully"}, status=200)
+        return JsonResponse({"message" : "Unfollowed successfully", "user" : user.serialize() }, status=200)
 
 def editPost(request):
     if request.method == 'POST':
@@ -239,5 +269,22 @@ def createComment(request, id):
         "message" : f"{user} has commented on Post No. {id}",
         "comment" : comment.serialize()
         }, status=200)
+    
+@login_required
+def upload(request, id):
+    user = request.user
+        
+        # data = json.loads(request.body)
+        # print(data.get("name", "Sad life"))
+        # image = data.get("image", "")
+        # imgURL = data.get("imgURL", "")
+        # user.profilePic = image
+        # user.profilePicURL = imgURL
+        # user.save()
+    #     return JsonResponse({
+    #         "message" : "Image successfully uploaded"
+    #     }, status=200)
+    # else :
+    return JsonResponse({"error" : "This page cannot be accessed with a GET request"}, status=403)
     
     

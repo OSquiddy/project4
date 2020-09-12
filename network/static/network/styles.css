@@ -1,7 +1,6 @@
 body {
     font-family: "Roboto", Arial, Helvetica, sans-serif;
-    /* background-image: url("network/static/network/images/Background.png"); */
-    background-color: #fafafa;
+    background-color: #f5f5f5;
 }
 
 .options {
@@ -61,8 +60,10 @@ body {
 
 .postContainer {
     background-color: white;
-    border-radius: 3px;
-    box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;
+    border-radius: 2px;
+    /* box-shadow:rgba(0, 0, 0, 0.2) 0px 2px 3px 0px; */
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;
+    
 }
 
 .register-form {
@@ -133,4 +134,50 @@ body {
 .following, .follower {
     
     padding: 5px 0;
+}
+
+#pYouMayKnowTab, #pAlsoViewedTab {
+    background-color : white;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;
+    border-radius: 2px;
+}
+
+#pYouMayKnow, #pAlsoViewed {
+    font-size: 20px;
+    margin: 20px 0 15px;
+}
+
+.btn {
+    border-radius: 2px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+#viewProfileButton {
+    font-size: 0.9rem;
+    border-radius: 2px;
+    width: 100%;
+    padding: 5px;
+    /* background-color: #0056B3; */
+}
+
+#viewProfileTab {
+    position: sticky;
+    top: 76px;
+}
+
+.nav-item {
+    font-weight: 300;
+}
+
+#descriptionButton:focus, #uploadImageButton:focus {
+    box-shadow: none;
+}
+
+#uploadImageModal {
+    transition: none !important;
+}
+
+#imgLookMessage {
+    display: none;
 }
