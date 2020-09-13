@@ -6,3 +6,6 @@ class ImageUploadForm(ModelForm):
     class Meta:
         model = User
         fields = ['profilePic']
+        
+class DifferentImageUploadForm(forms.Form):
+    image = forms.ImageField(label="Profile Picture: ")

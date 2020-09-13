@@ -13,18 +13,23 @@
                 </button>
             </div>
             <div class="modal-body" id="followersModalBody">
-                <div id="numFollowers">{{pFollowersList|length}} followers</div>
+                {% if pFollowersList|length == 0 %}
+                <div>{{pFollowersList|length}} followers</div>
+                {% else %}
                 {% for follower in pFollowersList %}
                 <div class="follower" id="follower-{{follower.id}}">
-                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
-                        class="commentProfilePic">
+                    {% if follower.profilePic %}
+                    <img class="modalProfilePic" src="{{ follower.profilePic.url }}" alt="profile-pic" >
+                    {% else %}
+                    <img class="modalProfilePic" src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic">
+                    {% endif %}
                     <span><a href="{% url 'profile' follower.username %}"> {{follower.username}} </a></span>
                 </div>
                 {% endfor %}
+                {% endif %}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -46,16 +51,18 @@
                 {% else %}
                 {% for follower in pFollowingList %}
                 <div class="following">
-                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
-                        class="commentProfilePic">
+                    {% if follower.profilePic %}
+                    <img class="modalProfilePic" src="{{ follower.profilePic.url }}" alt="profile-pic" >
+                    {% else %}
+                    <img class="modalProfilePic" src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic">
+                    {% endif %}
                     <span><a href="{% url 'profile' follower.username %}"> {{follower.username}} </a></span>
                 </div>
                 {% endfor %}
                 {% endif %}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -66,17 +73,17 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="delConfirmModalLabel">Followers</h5>
+                <h5 class="modal-title" id="delConfirmModalLabel">Confirm Delete</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure want to delete? Items deleted cannot be restored.
+                Are you sure want to delete? Deleted items cannot be restored.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" data-dismiss="modal" id="confirmDelete">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -97,31 +104,29 @@
                         <div class="col text-center">
                             <!-- <h4>Image Preview</h4> -->
                             <div
-                                style="background-color: grey; width: 150px; height: 150px; overflow: hidden; border-radius: 50%; margin: 20px auto 10px;">
+                                style="background-color: lightgrey; width: 150px; height: 150px; overflow: hidden; border-radius: 50%; margin: 20px auto;">
                                 {% if profile.profilePic %}
                                 <img id="output" src="{{profile.profilePic.url}}" style="width: 150px; height:150px; object-fit:cover; border-radius: 50%" />
                                 {% else %}
                                 <img id="output" style="width: 150px; height:150px; object-fit:cover; border-radius: 50%" />
                                 {% endif %}
                             </div>
-                            <div id="imgLookMessage">This is what the image will look like.</div>
-                            <div class="my-4"><label for="file" class="btn btn-primary mb-0" style="cursor: pointer;">Select Image</label>
-                            <div class="btn btn-danger" onclick="discard()">Discard</div>
+                            <div id="imgLookMessage">This is what the image will look like.
+                                <div style="font-size: 0.9em; color:grey">For best fit, use a square image</div>
                             </div>
+                            <label for="id_profilePic" class="btn btn-primary my-4" style="cursor: pointer;">Select Image</label>
 
-                            <form action="" method="POST" enctype="multipart/form-data" id="profilePicForm" name="profilePicForm">
+                            <form action="" method="POST" enctype="multipart/form-data" id="profilePicForm" name="profilePicForm" style="display: none;">
                                 {% csrf_token %}
                                 {{form.as_p}}
-                                
                             </form>
-                            <button form="profilePicForm">Submit</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer"> 
                 <button type="submit" class="btn btn-success" id="upload" data-user={{profile.id}} form="profilePicForm">Upload</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -148,14 +153,13 @@
                 {% endfor %}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div> -->
 
 <!-- Main Body -->
-
 <div class="container" style="max-width: 90%;">
     <div class="row p-0 mt-5">
         <div class="col-md-9">
@@ -166,19 +170,20 @@
                         <img src="{% static 'network/images/background.jpg' %}" alt=""
                             style="width: 102%; object-fit: cover;">
                     </div>
-                    <div class="d-flex">
-                        <!-- <div class="d-flex"
-                            style="z-index: 50; background-color: lightpink; width: 150px; border-radius: 125px; height: 150px; margin-top: -90px; border: 5px solid white; margin-bottom: 5px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;"> -->
+                    <div class="d-flex" id="profilePicContainer">
                             {% if profile.profilePic %}
-                            <img src="{{profile.profilePic.url}}" style="margin:-90px 0 5px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px; border: 5px solid white; width: 150px; border-radius: 50%; height: 150px; object-fit: cover;" id="profilePic">
+                            <img src="{{profile.profilePic.url}}" id="profilePic">
                             {% else %}
-                            <img src="{% static 'network/images/defaultAvatar.png' %}" style="margin:-90px 0 5px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px; border: 5px solid white; width: 150px; border-radius: 50%; height: 150px;object-fit: cover;" id="profilePic">
+                            <img src="{% static 'network/images/defaultAvatar.png' %}" id="profilePic">
                             {% endif %}
-                        <!-- </div> -->
                         <div class="align-self-end ml-auto">
                             {% csrf_token %}
                             {% if profile == request.user %}
-                            <button class="btn btn-primary" id="descriptionButton">Add a description</button>
+                            {% if profile.description == "" %}
+                            <button class="btn btn-primary" id="descriptionButton" data-id={{profile.id}}> Add a description </button>
+                            {% else %}
+                            <button class="btn btn-primary" id="descriptionButton" data-id={{profile.id}} style="display: none;"> Add a description </button>
+                            {% endif %}
                             <button class="btn btn-light border border-alert dropdown dropdown-toggle" type="button"
                                 id="uploadImageButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
@@ -187,7 +192,7 @@
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="uploadImageButton">
                                 <span class="dropdown-item" data-toggle="modal"
                                 data-target="#uploadImageModal">Upload</span>
-                                <a class="dropdown-item" href="#">Delete</a>
+                                <span class="dropdown-item" id="deleteProfilePic">Delete</span>
                             </div>
                             <!-- <i class="fas fa-caret-down"></i> -->
                             {% else %}
@@ -196,7 +201,7 @@
                             {% else %}
                             <button class="btn btn-primary" id="followButton">Follow</button>
                             {% endif %}
-                            <button class="btn btn-light border border-dark">Message</button>
+                            <button class="btn btn-light border border-alert">Message</button>
                             {% endif %}
                         </div>
 
@@ -212,27 +217,41 @@
                 </div>
             </div>
 
-            <div class="d-flex py-3 my-3"
-                style="background-color: white; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
-                <div class="col">
-                    <span style="font-size: 19px;">About</span>
-                    <div class="d-flex" style="height: 70px; background-color: lightgrey; margin-top: 10px"></div>
+            {% if profile.description == "" %}
+            <div class="py-3 my-3 descriptionContainer"
+                style="background-color: white; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px; display: none" id="descriptionContainer-{{profile.id}}">
+            {% else %}
+            <div class="py-3 my-3 descriptionContainer"
+                style="background-color: white; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;" id="descriptionContainer-{{profile.id}}">
+            {% endif %}
+                <div class="col description">
+                    <div class="d-flex">
+                        <div class="d-inline-flex pt-1" style="font-size: 1.25rem;">About</div>
+                        {% if profile.description == "" %}
+                        <div class="btn d-inline-flex ml-auto " id="editDescription" style="display: none;"><i class="fas fa-pen"></i> </div>
+                        {% else %}
+                        <div class="btn d-inline-flex ml-auto " id="editDescription" ><i class="fas fa-pen"></i> </div>
+                        {% endif %}
+                    </div>
+                    <div class="col mt-3" id="description">{{profile.description}}</div>
+                    <div class=""></div>
                 </div>
             </div>
+            
 
             <div class="d-flex my-3">
                 <div class="col">
                     <div class="row text-center justify-content-between">
                         <div class="col-6 py-3"
                             style="max-width: 49%; background-color: white; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
-                            <div style="font-size: 19px;">Followers</div>
+                            <div style="font-size: 1.25rem;">Followers</div>
                             <div class="fCountStyle" style="font-size: 2.6rem" id="followerCount" data-toggle="modal"
                                 data-target="#followersModal">
                                 {{profile.followerCount}}</div>
                         </div>
                         <div class="col-6 py-3"
                             style="max-width: 49%; background-color: white; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
-                            <div style="font-size: 19px;">Following</div>
+                            <div style="font-size: 1.25rem;">Following</div>
                             <div class="fCountStyle" style="font-size: 2.6rem" id="followingCount" data-toggle="modal"
                                 data-target="#followingModal">
                                 {{profile.followingCount}}</div>
@@ -244,20 +263,25 @@
             <div class="d-flex py-3 my-3"
                 style="background-color: white; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
                 <div class=" col">
-                    <span style="font-size: 19px;">Posts</span>
+                    <span style="font-size: 1.25rem;">Posts</span>
 
                     <div id="postsDisplay">
                         {% for post in page_obj %}
                         <div class="d-flex py-3 my-3 border border-alert" id="postContainer-{{post.id}}">
                             <div class="col">
                                 <div class="row">
-                                    <div class="col-1">
-                                        <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                            style="object-fit: contain; width: 100%; border-radius: 50px;"
-                                            class="commentProfilePic">
+                                    <div class="col-lg-1 col-md-2" >
+                                        <div class="postProfilePicConatiner">
+                                            {% if post.user.profilePic %}
+                                            <img class="postProfilePic" width="30" height="30" src="{{post.user.profilePic.url}}" alt="profile-pic">
+                                            {% else %}
+                                            <img class="postProfilePic" src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic">
+                                            {% endif %} 
+                                        </div>
+                                        
                                     </div>
-                                    <div class="col-11 pl-0 align-self-end">
-                                        <span style="font-size: 19px;" id="postUser" style="display: inline-block;">
+                                    <div class="col-lg-11 col-md-10 pl-0 align-self-end">
+                                        <span style="font-size: 1.25rem;" id="postUser" style="display: inline-block;">
                                             <a href="{% url 'profile' post.user %}"
                                                 class="userProfileLink">{{post.user|capfirst}}</a>
                                         </span>
@@ -309,13 +333,16 @@
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col-1">
+                                                    {% if comment.user.profilePic %}
+                                                    <img src="{{comment.user.profilePic.url}}"
+                                                        alt="profile-pic" class="commentProfilePic">
+                                                    {% else %}
                                                     <img src="{% static 'network/images/defaultAvatar.png' %}"
-                                                        alt="profile-pic"
-                                                        style="object-fit: contain; width: 80%; border-radius: 50px;"
-                                                        class="commentProfilePic">
+                                                        alt="profile-pic" class="commentProfilePic">
+                                                    {% endif %}
                                                 </div>
                                                 <div class="col-11 pl-0 align-self-end ml-n2">
-                                                    <span style="font-size: 19px;" id="postUser"
+                                                    <span style="font-size: 1.25rem;" id="postUser"
                                                         style="display: inline-block;">
                                                         <a href="{% url 'profile' comment.user.username %}"
                                                             class="userProfileLink">{{comment.user.username|capfirst}}</a>
@@ -416,9 +443,12 @@
                     <div class="suggestedUsers mb-2">
                         <div class="row">
                             <div class="col-3">
+                                {% if profile.profilePic %}
+                                <img src="{{ profile.profilePic.url }}" alt="profile-pic" class="pYouMayKnowPic">
+                                {% else %}
                                 <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                    style="object-fit: contain; width: 53px; border-radius: 50px; margin-right: 10px"
-                                    class="commentProfilePic">
+                                    class="pYouMayKnowPic">
+                                {% endif %}
                             </div>
                             <div class="col-9 pr-0">
                                 <div><a href="{% url 'profile' profile.username %}"> {{profile.first_name}}
@@ -440,9 +470,13 @@
                     <div class="suggestedUsers mb-2">
                         <div class="row">
                             <div class="col-3">
+                                {% if profile.profilePic %}
+                                <img src="{{ profile.profilePic.url }}" alt="profile-pic"
+                                    class="pAlsoViewedPic">
+                                {% else %}
                                 <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                    style="object-fit: contain; width: 53px; border-radius: 50px; margin-right: 10px"
-                                    class="commentProfilePic">
+                                    class="pAlsoViewedPic">
+                                {% endif %}
                             </div>
                             <div class="col-9 pr-0">
                                 <div><a href="{% url 'profile' profile.username %}"> {{profile.first_name}}
@@ -462,14 +496,14 @@
 </div>
 
 <script>
-    var loadFile = function (event) {
+    document.querySelector('#id_profilePic').onchange = function (event) {
             var image = document.getElementById('output');
             image.src = URL.createObjectURL(event.target.files[0]);
             document.querySelector('#imgLookMessage').style.display = 'block';
         };
 
     function discard() {
-        var image = document.getElementById('output');
+        var image = document.getElementById('id_profilePic');
         image.src = "";
         document.querySelector('#imgLookMessage').style.display = 'none';
     }

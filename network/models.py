@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from network.storage import OverwriteStorage
 
 def new_filename(instance, filename):
         basename, extension = filename.split('.')
@@ -8,9 +9,14 @@ def new_filename(instance, filename):
 class User(AbstractUser):
     followers = models.ManyToManyField('self', blank=True, related_name="followersList", symmetrical=False)
     following = models.ManyToManyField('self', blank=True, related_name="followingList", symmetrical=False)
-    profilePic = models.ImageField(upload_to=new_filename, null=True, blank=True)
-    profilePicURL = models.URLField(null=True, blank=True)
+    profilePic = models.ImageField(upload_to=new_filename, storage=OverwriteStorage(), null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    
+    def getProfileURL(self):
+        if self.profilePic and hasattr(self.profilePic, 'url'):
+            return self.profilePic.url
+        else:
+            return "/static/network/images/defaultAvatar.png"
     
     def __str__(self):
         return f"{self.username}"
@@ -23,7 +29,7 @@ class User(AbstractUser):
             "last_name" : self.last_name,
             "followers" : [follower.username for follower in self.followers.all()],
             "following" : [following.username for following in self.following.all()],
-            "profilePicURL" : self.profilePicURL,
+            "profilePic" : self.getProfileURL(),
             "description" : self.description
         }
         

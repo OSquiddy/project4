@@ -9,7 +9,6 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path("<slug:username>/following", views.followingPage, name="following"),
-    path("upload/<int:id>", views.upload, name="upload"),
     
     
     #API Routes
@@ -18,7 +17,9 @@ urlpatterns = [
     path("like/<int:id>", views.likePost, name="toggleLike"),
     path("comment/<int:id>", views.createComment, name="comment"),
     path("delete/<int:id>", views.deletePost, name="delete"),
-    
+    path("delpic", views.deleteProfilePic, name="delPic"),
+    path("upload/<int:id>", views.upload, name="upload"),
+    path("description", views.description, name="description"),
     
     # Check last
     path("<slug:name>", views.profile, name="profile"),

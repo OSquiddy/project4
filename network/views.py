@@ -45,7 +45,6 @@ def index(request):
 
     
 def profile(request, name):
-    print("Loaded profile")
     user = request.user
     if not user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
@@ -60,7 +59,6 @@ def profile(request, name):
     # Alternate method, in case I forget
     # Use get() method on the QuerySet returned by user.following.all() to directly get the profile
     # If it returns a profile, make followedStatus = True, else do nothing.
-    print("Followed Status: ", followedStatus)
     
     # All posts by the profile
     postsList = Post.objects.filter(user=profile.id)
@@ -268,12 +266,12 @@ def createComment(request, id):
     return JsonResponse({
         "message" : f"{user} has commented on Post No. {id}",
         "comment" : comment.serialize()
-        }, status=200)
+        }, status=201)
     
 @login_required
 def upload(request, id):
     user = request.user
-        
+    path = user.profilePic.url
         # data = json.loads(request.body)
         # print(data.get("name", "Sad life"))
         # image = data.get("image", "")
@@ -285,6 +283,28 @@ def upload(request, id):
     #         "message" : "Image successfully uploaded"
     #     }, status=200)
     # else :
-    return JsonResponse({"error" : "This page cannot be accessed with a GET request"}, status=403)
+    return JsonResponse({"path" : path}, status=201)
+
+@login_required
+def deleteProfilePic(request):
+    user = request.user
+    user.profilePic.delete(save=True)
+    user.save()
+    return JsonResponse({"message" : "Default profile picture set"}, status=200)
+
+@login_required
+def description(request):
+    user = request.user
+    if request.method == "POST":
+        data = json.loads(request.body)
+        description = data.get("description", "")
+        user.description = description
+        user.save()
+        return JsonResponse({
+            "message" : "Description added successfully",
+            "description" : description
+                            }, status=200)
+    else:
+        return JsonResponse({"error" : "Page cannot be accessed through get request"}, status=405)
     
     

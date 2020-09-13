@@ -180,4 +180,87 @@ body {
 
 #imgLookMessage {
     display: none;
+    margin: 10px 0;
+}
+
+#profilePicContainer #profilePic {
+    margin:-90px 0 5px; 
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px; 
+    border: 5px solid white; 
+    width: 150px;  
+    height: 150px; 
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+#smallProfilePic {
+    width: 70px; 
+    border-radius: 50%; 
+    height: 70px;
+    margin-top: -35px; 
+    border: 2px solid white; 
+    margin-bottom: 5px; 
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;
+    object-fit: cover;
+}
+
+/* .postProfilePicConatiner {
+    position: relative;
+    padding-bottom: 100%; 
+    height: 0;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.postProfilePicConatiner .postProfilePic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+} */
+
+.postProfilePic {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.commentProfilePic {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.postProfilePicSmall{
+    width: 1.825rem;
+    height: 1.825rem;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.commentProfilePicSmall{
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.pAlsoViewedPic, .pYouMayKnowPic {
+    object-fit: cover; 
+    width: 3.125rem; 
+    height: 3.125rem; 
+    border-radius: 50%; 
+    margin-right: 10px
+}
+
+.modalProfilePic {
+    width: 2.125rem;
+    height: 2.125rem;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
 }

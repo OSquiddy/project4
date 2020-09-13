@@ -17,9 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     if (document.querySelectorAll('.deleteButton') != undefined)
         document.querySelectorAll('.deleteButton').forEach(post => post.onclick = function () { deleteItem(this) });
-    if (document.querySelector('#upload') != undefined)
-        document.querySelector('#upload').onclick = function () { upload() };
-
+    if (document.querySelector('#profilePicForm') != undefined)
+        document.querySelector('#profilePicForm').onsubmit = function () { upload() };
+    if (document.querySelector('#deleteProfilePic') != undefined)
+        document.querySelector('#deleteProfilePic').onclick = function () { deleteProfilePic() };
+    if (document.querySelector('#descriptionButton') != undefined)
+        document.querySelector('#descriptionButton').onclick = () => { description() };
+        if (document.querySelector('#editDescription') != undefined)
+        document.querySelector('#editDescription').onclick = () => { description() };
+    
 })
 
 function submitPost() {
@@ -43,7 +49,7 @@ function submitPost() {
             //Print the result
             console.log(result)
             let post = result.posts[0]
-            let commentProfilePic = document.querySelector('.commentProfilePic').src
+            let commentProfilePic = post.user.profilePic
             let userProfileLink = document.querySelector('.userProfileLink').href
             //try using django templating system in javascript
             document.querySelector('#postsDisplay').insertAdjacentHTML('afterbegin', `
@@ -52,10 +58,10 @@ function submitPost() {
                     <div class="row">
                     <div class="col-1">
                         <img src="${commentProfilePic}" id="commentProfilePic" alt="profile-pic"
-                            style="object-fit: contain; width: 100%; border-radius: 50px;">
+                            style="object-fit: cover; width: 1.825rem; height: 1.825rem; border-radius: 50%;">
                     </div>
                     <div class="col-11 pl-0 align-self-end">
-                        <span style="font-size: 19px;" id="postUser" style="display: inline-block;">
+                        <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
                             <a href="${userProfileLink}">
                             ${post.user.username.charAt(0).toUpperCase() + post.user.username.slice(1)}
                             </a>
@@ -193,20 +199,20 @@ function edit(post) {
         <textarea id="edit-${post.dataset.id}" style="width:100%; margin: 10px 0; padding: 5px" rows="2" onfocus="var value = this.value.trim(); this.value = null; this.value = value;" autofocus>${content}</textarea>
         `
 
+    let newPostButton = document.createElement('button');
+    newPostButton.innerHTML = 'Post';
+    newPostButton.className = 'btn btn-primary ml-auto';
+    newPostButton.style.display = 'inline-float';
+    newPostButton.id = `newPostButton-${id}`;
+    document.querySelector(`#optionRow-${id}`).append(newPostButton);
+
     let cancelButton = document.createElement('button');
     cancelButton.innerHTML = 'Cancel';
-    cancelButton.className = 'btn btn-primary ml-auto';
+    cancelButton.className = 'btn btn-light border boder-alert ml-1 mr-3';
     cancelButton.style.display = 'inline-float';
     cancelButton.id = `cancelButton-${id}`;
     document.querySelector(`#optionRow-${id}`).append(cancelButton);
 
-    let newPostButton = document.createElement('button');
-    newPostButton.innerHTML = 'Post';
-    newPostButton.className = 'btn btn-success ml-2';
-    newPostButton.style.display = 'inline-float';
-    newPostButton.style.marginRight = '15px';
-    newPostButton.id = `newPostButton-${id}`;
-    document.querySelector(`#optionRow-${id}`).append(newPostButton)
 
     newPostButton.onclick = () => {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -346,7 +352,7 @@ function postComment(commentBox) {
             console.log(result);
             console.log("Comment posted");
             const user = document.querySelector('#username').innerHTML;
-            const img = document.querySelector('img').src;
+            const img = result.comment.user.profilePic;
             let comment = result.comment;
             const commentContainer = document.querySelector(`#commentsDisplay-${postID}`);
             commentContainer.insertAdjacentHTML('beforeend', `
@@ -355,11 +361,11 @@ function postComment(commentBox) {
                                 <div class="row">
                                     <div class="col-1">
                                         <img src="${img}" alt="profile-pic"
-                                            style="object-fit: contain; width: 80%; border-radius: 50px;"
+                                            style="object-fit: cover; width: 1.5rem; height: 1.5rem; border-radius: 50%;"
                                             class="commentProfilePic">
                                     </div>
                                     <div class="col-11 px-0 align-self-end ml-n2">
-                                        <span style="font-size: 19px;" id="postUser" style="display: inline-block;">
+                                        <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
                                             <a href="/${user}"
                                                 class="userProfileLink">${user.charAt(0).toUpperCase() + user.slice(1)}</a>
                                         </span>
@@ -444,29 +450,91 @@ function deleteItem(post) {
 }
 
 function upload() {
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    let image = document.querySelector('#output');
-    imgURL = image.src;
+    let image = document.querySelector('#output').src;
     let user = document.querySelector('#upload').dataset.user;
+    document.querySelector('#profilePic').src = image;
     // fd = new FormData()
     // fd.append()
-    // fetch(`/upload/${user}`, {
-    //    method: 'POST',
-    //    mode: 'same-origin',
-    //    headers: {
-    //        "X-CSRFToken" : csrftoken
-    //    },
-    //    body: JSON.stringify({
-    //        image: image,
-    //        imgURL : imgURL
-    //    }) 
-    // })
+    // fetch(`/upload/${user}`)
     // .then(response => response.json())
     // .then(result => {
     //     console.log(result);
-    //     document.querySelector('#profilePic').src = imgURL;
+    //     document.querySelector('#profilePic').src = result.path;
     // })
     // .catch(error => console.log(error));
-    document.querySelector('#profilePic').src = imgURL;
+
     // return false;
+}
+
+function deleteProfilePic() {
+    
+    fetch(`/delpic`)
+    .then(response => response.json())
+    .then(result => {
+        console.log(result);
+        document.querySelector('#profilePic').src = "/static/network/images/defaultAvatar.png";
+    })
+    .catch(error => console.log(error));
+}
+
+function description() {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    let description = document.querySelector('#description').innerHTML;
+    let id = document.querySelector('#descriptionButton').dataset.id;
+    document.querySelector(`#descriptionContainer-${id}`).style.display = 'flex';
+
+    if (description == "") {
+        document.querySelector('#description').innerHTML = `<textarea rows="5" style="margin:0 auto 10px; width: 100%; padding: 9px" id="descriptionText"></textarea>
+        <div class="d-flex dOptionRow justify-content-end">
+            <button class="btn btn-primary mx-1" id="dSubmitButton">Submit</button>
+            <button class="btn btn-light border border-alert ml-1" id="dCancelButton">Cancel</button>
+        </div>
+    `;
+    }
+    else {
+        document.querySelector('#description').innerHTML = `<textarea rows="5" style="margin:0 auto 10px; width: 100%; padding: 9px" id="descriptionText"  onfocus="var value = this.value.trim(); this.value = null; this.value = value;" autofocus>${description}</textarea>
+        <div class="d-flex dOptionRow justify-content-end">
+            <button class="btn btn-primary mx-1" id="dSubmitButton">Submit</button>
+            <button class="btn btn-light border border-alert ml-1" id="dCancelButton">Cancel</button>
+        </div>
+        `;
+    }
+    
+    
+
+    document.querySelector('#dCancelButton').onclick = () => {
+        if (description == "")
+            document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
+        else 
+            document.querySelector('#description').innerHTML = description;
+    }
+
+    document.querySelector('#dSubmitButton').onclick = () => {
+        fetch('/description', {
+            method: "POST",
+            mode: "same-origin",
+            headers: {
+                "X-CSRFToken" : csrftoken
+            },
+            body: JSON.stringify({
+                description: document.querySelector('#descriptionText').value
+            })
+
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+            if(result.description == "") {
+                document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
+                document.querySelector('#descriptionButton').innerText = 'Add a description';
+            }
+            else {
+                document.querySelector('#description').innerHTML = result.description;
+                document.querySelector('#editDescription').style.display = 'flex';
+                document.querySelector('#descriptionButton').style.display = "none";
+            }
+            
+        })
+        .catch(error => console.log(error));
+    }
 }

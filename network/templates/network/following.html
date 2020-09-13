@@ -8,17 +8,17 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="delConfirmModalLabel">Followers</h5>
+                <h5 class="modal-title" id="delConfirmModalLabel">Confirm Delete</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure want to delete? Items deleted cannot be restored.
+                Are you sure want to delete? Deleted items cannot be restored.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" data-dismiss="modal" id="confirmDelete">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -64,9 +64,11 @@
                     <div class="col">
                         <div class="row">
                             <div class="col-1">
-                                <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                    style="object-fit: contain; width: 120%; border-radius: 50px;"
-                                    class="commentProfilePic">
+                                {% if post.user.profilePic %}
+                                <img class="postProfilePicSmall" src="{{post.user.profilePic.url}}" alt="profile-pic">
+                                {% else %}
+                                <img class="postProfilePicSmall" src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic">
+                                {% endif %}
                             </div>
                             <div class="col-11 pl-0 align-self-end">
                                 <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
@@ -119,9 +121,13 @@
                                 <div class="col">
                                     <div class="row">
                                         <div class="col-1">
-                                            <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                                style="object-fit: contain; width: 120%; border-radius: 50px;"
-                                                class="commentProfilePic">
+                                            {% if comment.user.profilePic %}
+                                            <img src="{{comment.user.profilePic.url}}"
+                                                alt="profile-pic" class="commentProfilePicSmall">
+                                            {% else %}
+                                            <img src="{% static 'network/images/defaultAvatar.png' %}"
+                                                alt="profile-pic" class="commentProfilePicSmall">
+                                            {% endif %}
                                         </div>
                                         <div class="col-11 pl-1 pr-0 align-self-end ml-n2">
                                             <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
@@ -218,9 +224,12 @@
                     <div class="suggestedUsers mb-2">
                         <div class="row">
                             <div class="col-3">
+                                {% if profile.profilePic %}
+                                <img src="{{ profile.profilePic.url }}" alt="profile-pic" class="pYouMayKnowPic">
+                                {% else %}
                                 <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                    style="object-fit: contain; width: 53px; border-radius: 50px; margin-right: 10px"
-                                    class="commentProfilePic">
+                                    class="pYouMayKnowPic">
+                                {% endif %}
                             </div>
                             <div class="col-9 pr-0">
                                 <div><a href="{% url 'profile' profile.username %}"> {{profile.first_name}}
