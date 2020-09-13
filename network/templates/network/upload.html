@@ -3,15 +3,45 @@
 
 {% block body %}
 
-<div class="container mt-5">
-    <p><input type="file" accept="image/*" name="image" id="file" onchange="loadFile(event)" ></p>
-    <p><label for="file" style="cursor: pointer;">Upload Image</label></p>
-    <p><img id="output" width="200" /></p>
+<div class="container mt-5 text-center">
+
+    <h2>Image Preview</h2>
+    <div
+        style="background-color: lightgrey; width: 250px; height: 250px; overflow: hidden; border-radius: 50%; margin: 30px auto;">
+        {% if request.user.profilePic %}
+        <img id="output" src="{{request.user.profilePic.url}}"
+            style="width: 250px; height:250px; object-fit:cover; border-radius: 50%" />
+        {% else %}
+        <img id="output" src="/static/network/images/defaultAvatar.png" style="width: 250px; height:250px; object-fit:cover; border-radius: 50%" />
+        {% endif %}
+    </div>
+    <div id="imgLookMessage">This is what the image will look like.
+        <div style="font-size: 0.9em; color:grey">For best fit, use a square image</div>
+    </div>
+    {% if not discard %}
+    <div id="updatedMessage">Profile picture has been updated!</div>
+    {% endif %}
+    <label for="id_profilePic" class="btn btn-primary my-4" style="cursor: pointer;">Select Image</label>
+    <form action="" method="POST" enctype="multipart/form-data" id="profilePicForm" name="profilePicForm"
+        style="display: none;">
+        {% csrf_token %}
+        {{form.as_p}}
+        
+    </form>
+    <button form="profilePicForm" type="submit" class="btn btn-success" data-user={{profile.id}} id="uploadPicButton">Save</button>
+
+    {% if discard %}
+    <a href="{% url 'profile' request.user.username %}" class="btn btn-danger" id="returnToProfile">Discard Changes</a>
+    {% else %}
+    <a href="{% url 'profile' request.user.username %}" class="btn btn-light border border-alert" id="returnToProfile">Go to Profile</a>
+    {% endif %}
 
     <script>
-        var loadFile = function (event) {
+        document.querySelector('#id_profilePic').onchange = function (event) {
             var image = document.getElementById('output');
             image.src = URL.createObjectURL(event.target.files[0]);
+            document.querySelector('#imgLookMessage').style.display = 'block';
+            document.querySelector('#updatedMessage').style.display = 'none';
         };
     </script>
 </div>

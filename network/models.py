@@ -33,6 +33,9 @@ class User(AbstractUser):
             "description" : self.description
         }
         
+    def getAllFollowers(self):
+        return [follower.serialize() for follower in self.followers.all()]
+    
     def followerCount(self):
         return len(self.followers.all())
     
@@ -64,6 +67,7 @@ class Post(models.Model):
             "user" : self.user.serialize(),
             "content" : self.content,
             "likes" : len(self.allLikes()),
+            "likers" : [user.serialize() for user in self.likes.all()],
             "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
         }
         

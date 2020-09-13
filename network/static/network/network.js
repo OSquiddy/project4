@@ -17,8 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     if (document.querySelectorAll('.deleteButton') != undefined)
         document.querySelectorAll('.deleteButton').forEach(post => post.onclick = function () { deleteItem(this) });
-    if (document.querySelector('#profilePicForm') != undefined)
-        document.querySelector('#profilePicForm').onsubmit = function () { upload() };
     if (document.querySelector('#deleteProfilePic') != undefined)
         document.querySelector('#deleteProfilePic').onclick = function () { deleteProfilePic() };
     if (document.querySelector('#descriptionButton') != undefined)
@@ -155,13 +153,12 @@ function follow() {
                     document.querySelector('#followerCount').innerHTML = followerCount;
                     let newFollower = document.createElement('div');
                     const user = result.user;
-                    document.querySelector('#numFollowers').style.display = 'none';
+                    if (followerCount > 0 && document.querySelector('#numFollowers') != undefined)
+                        document.querySelector('#numFollowers').style.display = 'none';
                     const img = document.querySelector('img').src;
                     newFollower.innerHTML = `
                     <div class="follower" id="follower-${user.id}">
-                    <img src="${img}" alt="profile-pic"
-                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
-                        class="commentProfilePic">
+                    <img src="${user.profilePic}" alt="profile-pic" class="modalProfilePic">
                     <span><a href="/${user.username}"> ${user.username} </a></span>
                     </div>
                     `;
@@ -447,23 +444,6 @@ function deleteItem(post) {
             .catch(error => console.log(error));
         document.querySelector(`#${post.dataset.item}Container-${id}`).remove();
     }
-}
-
-function upload() {
-    let image = document.querySelector('#output').src;
-    let user = document.querySelector('#upload').dataset.user;
-    document.querySelector('#profilePic').src = image;
-    // fd = new FormData()
-    // fd.append()
-    // fetch(`/upload/${user}`)
-    // .then(response => response.json())
-    // .then(result => {
-    //     console.log(result);
-    //     document.querySelector('#profilePic').src = result.path;
-    // })
-    // .catch(error => console.log(error));
-
-    // return false;
 }
 
 function deleteProfilePic() {

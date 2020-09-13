@@ -14,7 +14,7 @@
             </div>
             <div class="modal-body" id="followersModalBody">
                 {% if pFollowersList|length == 0 %}
-                <div>{{pFollowersList|length}} followers</div>
+                <div id="numFollowers">{{pFollowersList|length}} followers</div>
                 {% else %}
                 {% for follower in pFollowersList %}
                 <div class="follower" id="follower-{{follower.id}}">
@@ -89,6 +89,7 @@
     </div>
 </div>
 
+<!-- Upload Image Modal -->
 <div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -114,7 +115,7 @@
                             <div id="imgLookMessage">This is what the image will look like.
                                 <div style="font-size: 0.9em; color:grey">For best fit, use a square image</div>
                             </div>
-                            <label for="id_profilePic" class="btn btn-primary my-4" style="cursor: pointer;">Select Image</label>
+                            <label for="id_profilePic" class="btn btn-primary my-1" style="cursor: pointer;">Upload</label>
 
                             <form action="" method="POST" enctype="multipart/form-data" id="profilePicForm" name="profilePicForm" style="display: none;">
                                 {% csrf_token %}
@@ -125,7 +126,7 @@
                 </div>
             </div>
             <div class="modal-footer"> 
-                <button type="submit" class="btn btn-success" id="upload" data-user={{profile.id}} form="profilePicForm">Upload</button>
+                <button type="submit" class="btn btn-success" id="upload" data-user={{profile.id}} form="profilePicForm">Save</button>
                 <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -133,7 +134,7 @@
 </div>
 
 <!-- Post Likes Modal List -->
-<!-- <div class="modal fade" id="postLikesModal" tabindex="-1" aria-labelledby="postLikesModalLabel" aria-hidden="true">
+<div class="modal fade" id="postLikesModal" tabindex="-1" aria-labelledby="postLikesModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -157,7 +158,7 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 
 <!-- Main Body -->
 <div class="container" style="max-width: 90%;">
@@ -192,6 +193,7 @@
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="uploadImageButton">
                                 <span class="dropdown-item" data-toggle="modal"
                                 data-target="#uploadImageModal">Upload</span>
+                                <a href="{% url 'uploadImage' %}" class="dropdown-item">Upload</a>
                                 <span class="dropdown-item" id="deleteProfilePic">Delete</span>
                             </div>
                             <!-- <i class="fas fa-caret-down"></i> -->

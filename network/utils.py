@@ -12,7 +12,7 @@ def sortByTime(postsList):
 def returnTime(post):
     return post.time
 
-def getRandomProfiles():
-    randomProfiles = list(User.objects.all())
+def getRandomProfiles(user):
+    randomProfiles = list(User.objects.all().exclude(id=user.id))
     randomProfiles = random.sample(randomProfiles, k=4)
     return randomProfiles

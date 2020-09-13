@@ -25,8 +25,8 @@ def index(request):
     page_obj = paginator.get_page(page_number)
     
     # Randomly selected profiles
-    pYouMayKnow = utils.getRandomProfiles()
-    pAlsoViewed = utils.getRandomProfiles()
+    pYouMayKnow = utils.getRandomProfiles(user)
+    pAlsoViewed = utils.getRandomProfiles(user)
     
     if request.method == 'POST':
         print("POST request has been called")
@@ -52,23 +52,26 @@ def profile(request, name):
     userFollowingList = user.following.all()
     profileFollowingList = profile.following.all()
     profileFollowersList = profile.followers.all()
-    # print("The values of the userFollowingList are : ", userFollowingList)
     followedStatus = False
-    if profile in userFollowingList:
-        followedStatus = True
     # Alternate method, in case I forget
     # Use get() method on the QuerySet returned by user.following.all() to directly get the profile
     # If it returns a profile, make followedStatus = True, else do nothing.
-    
+    try:
+        followedProfile = userFollowingList.get(id=profile.id)
+        print("You follow this person")
+        followedStatus = True
+    except User.DoesNotExist:
+        pass
     # All posts by the profile
     postsList = Post.objects.filter(user=profile.id)
     paginator = Paginator(postsList, 10)
     page_number =  request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+    likers = [post.serialize for post in postsList]
+    print("Likers are = ", likers)
     # Randomly selected profiles
-    pYouMayKnow = utils.getRandomProfiles()
-    pAlsoViewed = utils.getRandomProfiles()
+    pYouMayKnow = utils.getRandomProfiles(user)
+    pAlsoViewed = utils.getRandomProfiles(user)
     
     # Form to upload image
     form = ImageUploadForm()
@@ -107,8 +110,8 @@ def followingPage(request, username):
     page_obj = paginator.get_page(page_number)
     
     # Randomly selected profiles
-    pYouMayKnow = utils.getRandomProfiles()
-    pAlsoViewed = utils.getRandomProfiles()
+    pYouMayKnow = utils.getRandomProfiles(user)
+    pAlsoViewed = utils.getRandomProfiles(user)
     
     return render(request, "network/following.html", {
         "postsList" : postsList,
@@ -267,23 +270,6 @@ def createComment(request, id):
         "message" : f"{user} has commented on Post No. {id}",
         "comment" : comment.serialize()
         }, status=201)
-    
-@login_required
-def upload(request, id):
-    user = request.user
-    path = user.profilePic.url
-        # data = json.loads(request.body)
-        # print(data.get("name", "Sad life"))
-        # image = data.get("image", "")
-        # imgURL = data.get("imgURL", "")
-        # user.profilePic = image
-        # user.profilePicURL = imgURL
-        # user.save()
-    #     return JsonResponse({
-    #         "message" : "Image successfully uploaded"
-    #     }, status=200)
-    # else :
-    return JsonResponse({"path" : path}, status=201)
 
 @login_required
 def deleteProfilePic(request):
@@ -306,5 +292,26 @@ def description(request):
                             }, status=200)
     else:
         return JsonResponse({"error" : "Page cannot be accessed through get request"}, status=405)
-    
-    
+        
+@login_required
+def uploadPage(request):
+    user = request.user
+    # Form to upload image
+    form = ImageUploadForm()
+    if request.method == "POST":
+        form = ImageUploadForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+        print(request.FILES, request.POST)
+        return render(request, "network/upload.html", {
+            "form" : form
+        })
+    return render(request, "network/upload.html", {
+            "form" : form,
+            "discard" : True
+        })
+
+def api(request):
+    user = request.user
+    postsList = Post.objects.all()
+    return JsonResponse({"posts" : [post.serialize() for post in postsList]}, status=200)    
