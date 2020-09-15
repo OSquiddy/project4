@@ -24,10 +24,16 @@ body {
     margin: 0 5px;
 }
 
-.options:hover {
+.options:hover, .options-comment:hover {
     cursor: pointer;
     background-color: rgba(44, 44, 44, 0.08);
     border-radius: 3px;
+}
+
+.options-comment {
+    font-size: 0.775rem;
+    padding: 3px 6px;
+    margin : 5px;
 }
 
 .postOptionRow {
@@ -36,6 +42,10 @@ body {
     border-bottom: 1px solid lightgrey;
     padding: 5px 0;
     margin: 0 15px;
+}
+
+.commentOptionRow {
+    margin-left: 5px;
 }
 
 .metaInfoRow {
@@ -73,7 +83,9 @@ body {
 
 .commentContainer {
     background-color: #F3F6F8;
-    border-radius: 3px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
     /* box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px; */
 }
 
@@ -252,22 +264,22 @@ body {
 }
 
 .commentProfilePic {
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
     object-fit: cover;
 }
 
 .postProfilePicSmall{
-    width: 1.825rem;
-    height: 1.825rem;
+    width: 2.125rem;
+    height: 2.125rem;
     object-fit: cover;
     border-radius: 50%;
 }
 
 .commentProfilePicSmall{
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 2rem;
+    height: 2rem;
     object-fit: cover;
     border-radius: 50%;
 }

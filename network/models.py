@@ -80,6 +80,9 @@ class Comment(models.Model):
     postID = models.IntegerField(blank=True, null=True)
     post = models.ForeignKey(Post, blank=True, null=True, on_delete=models.CASCADE, related_name="post")
     
+    class Meta:
+        ordering = ['-time']
+    
     def allLikes(self):
         userList = list(self.likes.all())
         for i in range(len(userList)):

@@ -296,8 +296,10 @@ function like(post) {
             document.querySelector(`#postLikes-${id}`).dataset.numlikes = numLikes;
         }
         else if (item == 'comment') {
-            if (document.querySelector(`#commentLikes-${id}`).style.display === 'none')
+            if (document.querySelector(`#commentLikes-${id}`).style.display === 'none') {
+                document.querySelector(`#commentLikeIcon-${id}`).style.display = 'block';
                 document.querySelector(`#commentLikes-${id}`).style.display = 'block';
+            }
             numLikes = parseInt(document.querySelector(`#commentLikes-${id}`).dataset.numlikes);
             numLikes += 1;
             document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes} likes`;
@@ -337,8 +339,10 @@ function like(post) {
         else if (item == 'comment') {
             numLikes = parseInt(document.querySelector(`#commentLikes-${id}`).dataset.numlikes);
             numLikes--;
-            if (numLikes === 0)
+            if (numLikes === 0) {
+                document.querySelector(`#commentLikeIcon-${id}`).style.display = 'none';
                 document.querySelector(`#commentLikes-${id}`).style.display = 'none';
+            }
             document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes} likes`;
             document.querySelector(`#commentLikes-${id}`).dataset.numlikes = numLikes;
             
@@ -391,7 +395,7 @@ function postComment(commentBox) {
             document.querySelector(`#postComments-${postID}`).dataset.numcomments = numComments;
             document.querySelector(`#postComments-${postID}`).innerHTML = `${numComments} comments`;
             const commentContainer = document.querySelector(`#commentsDisplay-${postID}`);
-            commentContainer.insertAdjacentHTML('beforeend', `
+            commentContainer.insertAdjacentHTML('beforebegin', `
             <div class="d-flex py-3 my-3 mx-3 commentContainer" id="commentContainer-${comment.id}">
                             <div class="col">
                                 <div class="row">

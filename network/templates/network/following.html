@@ -163,64 +163,72 @@
 
                         <div class="commentsDisplay" id="commentsDisplay-{{post.id}}">
                             {% for comment in post.comments %}
-                            <div class="d-flex py-3 my-3 mx-3 commentContainer" id="commentContainer-{{comment.id}}">
-                                <div class="col">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            {% if comment.user.profilePic %}
-                                            <img src="{{comment.user.profilePic.url}}"
-                                                alt="profile-pic" class="commentProfilePicSmall">
-                                            {% else %}
-                                            <img src="{% static 'network/images/defaultAvatar.png' %}"
-                                                alt="profile-pic" class="commentProfilePicSmall">
-                                            {% endif %}
+                            <div class="d-flex my-3 mx-3 " id="commentContainer-{{comment.id}}">
+                                <div class="col-1">
+                                    {% if comment.user.profilePic %}
+                                    <img src="{{comment.user.profilePic.url}}" alt="profile-pic"
+                                        class="commentProfilePicSmall">
+                                    {% else %}
+                                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
+                                        class="commentProfilePicSmall">
+                                    {% endif %}
+                                </div>
+                                <div class="col-11">
+                                    <div class="commentContainer px-3 pt-2">
+                                        <div class="row">
+                                        
+                                            <div class="col pr-0 align-self-end">
+                                                <span style="font-size: 1.05rem;" id="postUser"
+                                                    style="display: inline-block;">
+                                                    <a href="{% url 'profile' comment.user.username %}"
+                                                        class="userProfileLink">{{comment.user.username|capfirst}}</a>
+                                                </span>
+                                                {% if comment.user == request.user %}
+                                                <div class="dropdown d-inline-flex" style=" float:right">
+                                                    <button class="btn" type="button" id="dropdownMenuButton"
+                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right"
+                                                        aria-labelledby="dropdownMenuButton">
+                                                        <span class="editButton dropdown-item" data-item="comment"
+                                                            data-id="comment-{{comment.id}}"><i
+                                                                class="far fa-edit"></i>&nbsp;Edit</span>
+                                                        <span class="deleteButton dropdown-item"
+                                                            data-id="comment-{{comment.id}}" data-item="comment"
+                                                            id="deleteButton-{{comment.id}}" data-postID="post" data-container="{{post.id}}">&nbsp;<i
+                                                                class="fas fa-times"></i>&nbsp;&nbsp;Delete</span>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        <div class="col-11 pl-1 pr-0 align-self-end ml-n2">
-                                            <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
-                                                <a href="{% url 'profile' comment.user.username %}"
-                                                    class="userProfileLink">{{comment.user.username|capfirst}}</a>
-                                            </span>
-                                            {% if comment.user == request.user %}
-                                            <div class="dropdown d-inline-flex" style=" float:right">
-                                                <button class="btn" type="button" id="dropdownMenuButton"
-                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-h"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuButton">
-                                                    <span class="editButton dropdown-item" data-item="comment"
-                                                        data-id="comment-{{comment.id}}"><i
-                                                            class="far fa-edit"></i>&nbsp;Edit</span>
-                                                    <span class="deleteButton dropdown-item"
-                                                        data-id="comment-{{comment.id}}" data-item="comment"
-                                                        id="deleteButton-{{comment.id}}" data-postID="post">&nbsp;<i
-                                                            class="fas fa-times"></i>&nbsp;&nbsp;Delete</span>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="postContent" id="comment-{{comment.id}}">{{comment.comment}}
                                                 </div>
                                             </div>
-                                            {% endif %}
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="postContent" id="comment-{{comment.id}}">{{comment.comment}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="numLikes" data-numLikes="{{comment.allLikes|length}}"
-                                        data-id="{{comment.id}}" data-type="comment" id="commentLikes-{{comment.id}}">
-                                        {{comment.allLikes|length}}
-                                        likes</div>
-                                    <div class="row optionRow" id="optionRow-{{comment.id}}">
+                                    
+                                    <div class="row commentOptionRow" id="optionRow-{{comment.id}}">
                                         {% if request.user.username in comment.allLikes %}
-                                        <span class="options likeButton ml-3" data-id="comment-{{comment.id}}"
-                                            style="color: #007bff" data-item="comment">
-                                            <i class="far fa-thumbs-up"></i> Like</span>
+                                        <span class="options-comment likeButton ml-3" data-id="comment-{{comment.id}}" style="color: #007bff" data-item="comment">
+                                        Like </span>
                                         {% else %}
-                                        <span class="options likeButton ml-3" data-id="comment-{{comment.id}}"
-                                            data-item="comment">
-                                            <i class="far fa-thumbs-up"></i> Like</span>
+                                        <span class="options-comment likeButton ml-3" data-id="comment-{{comment.id}}"
+                                            data-item="comment"> Like </span>
                                         {% endif %}
-                                        <span class="options" data-id="comment-{{comment.id}}"><i
+                                        {% if comment.allLikes|length > 0 %}
+                                        <i id="commentLikeIcon-{{comment.id}}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem;"></i>
+                                        {% else %}
+                                        <i id="commentLikeIcon-{{comment.id}}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;"></i>
+                                        {% endif %}
+                                        <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="{{comment.allLikes|length}}"
+                                            data-id="{{comment.id}}" data-type="comment" id="commentLikes-{{comment.id}}"> {{comment.allLikes|length}}
+                                        </span>
+                                        <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>
+                                        <span class="options-comment" data-id="comment-{{comment.id}}"><i
                                                 class="far fa-comment"></i>
                                             Reply</span>
                                     </div>
