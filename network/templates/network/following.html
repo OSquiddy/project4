@@ -24,6 +24,33 @@
     </div>
 </div>
 
+<!-- Post Likes Modal List -->
+<div class="modal fade" id="postLikesModal" tabindex="-1" aria-labelledby="postLikesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postLikesModalLabel">Likers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="likersModalBody">
+                {% for user in post.serialize.likers %}
+                <div class="follower">
+                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
+                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
+                        class="commentProfilePic">
+                    {{user}}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container" style="max-width: 85%;">
     <div class="row p-0 mt-5">
         <div class="col-md-2" style="font-size: 0.9rem">
@@ -33,11 +60,17 @@
                     <div class="row" style="height: 60px; overflow: hidden;">
                         <img src="{% static 'network/images/background.jpg' %}" alt="" style="width: 102%; object-fit: cover;">
                     </div>
-                    <div class="d-flex">
-                        <div class="d-flex mx-auto"
+                    <div class="d-flex justify-content-center">
+                        <!-- <div class="d-flex mx-auto"
                             style="z-index: 50; background-color: lightpink; width: 70px; border-radius: 155px; height: 70px; margin-top: -35px; border: 2px solid white; margin-bottom: 5px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
-                            <!-- <img src="" alt="" style="background-color: lightpink; width: 250px; border-radius: 125px; height: 250px;"> -->
-                        </div>
+                            
+                        </div> -->
+                        {% if request.user.profilePic %}
+                        <img id="smallProfilePic" src="{{request.user.profilePic.url}}" alt="profile-pic">
+                        {% else %}
+                        <img id="smallProfilePic" src="{% static 'network/images/defaultAvatar.png' %}"
+                            alt="profile-pic">
+                        {% endif %}
                     </div>
                     <div class="mb-3 mt-3 text-center">
                         <span style="font-size: 1.125rem; font-weight: 500;">{{request.user.first_name|capfirst}}
@@ -99,10 +132,13 @@
                                 <div class="postContent" id="post-{{post.id}}">{{post.content}}</div>
                             </div>
                         </div>
-                        <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="numLikes-{{post.id}}">
-                            {{post.allLikes|length}} likes
+                        
+                        <div class="metaInfoRow d-flex justify-content-between ml-2 mr-3">
+                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-type="post"> {{post.allLikes|length}} likes </div>
+                            <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-type="post">{{post.comments|length}} comments</div>
                         </div>
-                        <div class="row optionRow" id="optionRow-{{post.id}}">
+                        
+                        <div class="row postOptionRow" id="optionRow-{{post.id}}">
                             {% if request.user.username in post.allLikes %}
                             <span class="options likeButton ml-3" data-id="post-{{post.id}}" style="color: #007bff"
                                 data-item="post">
@@ -115,6 +151,16 @@
                                 Comment</span>
                             <span class="options" data-id="post-{{post.id}}"><i class="fas fa-share"></i> Share</span>
                         </div>
+
+                        <div class="row">
+                            <div class="col my-3">
+                                {% csrf_token %}
+                                <input class="comment" data-postID="{{post.id}}" type="text"
+                                    placeholder="Write a comment..."
+                                    style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey">
+                            </div>
+                        </div>
+
                         <div class="commentsDisplay" id="commentsDisplay-{{post.id}}">
                             {% for comment in post.comments %}
                             <div class="d-flex py-3 my-3 mx-3 commentContainer" id="commentContainer-{{comment.id}}">
@@ -161,8 +207,7 @@
                                         </div>
                                     </div>
                                     <div class="numLikes" data-numLikes="{{comment.allLikes|length}}"
-                                        data-id="numLikes-{{comment.id}}" data-toggle="modal"
-                                        data-target="#postLikesModal" id="commentNumLikes-{{comment.id}}">
+                                        data-id="{{comment.id}}" data-type="comment" id="commentLikes-{{comment.id}}">
                                         {{comment.allLikes|length}}
                                         likes</div>
                                     <div class="row optionRow" id="optionRow-{{comment.id}}">
@@ -183,14 +228,7 @@
                             </div>
                             {% endfor %}
                         </div>
-                        <div class="row">
-                            <div class="col my-3">
-                                {% csrf_token %}
-                                <input class="comment" data-postID="{{post.id}}" type="text"
-                                    placeholder="Write a comment..."
-                                    style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey">
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
                 {% endfor %}

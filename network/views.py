@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Q
+from collections import defaultdict
 import json
 
 from .models import User, Post, Comment
@@ -67,8 +68,13 @@ def profile(request, name):
     paginator = Paginator(postsList, 10)
     page_number =  request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    likers = [post.serialize for post in postsList]
-    print("Likers are = ", likers)
+    likers = [post.serialize() for post in postsList]
+    # print("Likers are = ", likers)
+    x = defaultdict(list)
+    for post in postsList:
+        d = post.serialize()
+        x[d["id"]].append(d["likers"])
+    # print(x)
     # Randomly selected profiles
     pYouMayKnow = utils.getRandomProfiles(user)
     pAlsoViewed = utils.getRandomProfiles(user)
@@ -88,6 +94,7 @@ def profile(request, name):
         "page_obj" : page_obj,
         "pFollowingList" : profileFollowingList,
         "pFollowersList" : profileFollowersList,
+        "likers" : likers,
         "pYouMayKnow" : pYouMayKnow,
         "pAlsoViewed" : pAlsoViewed,
         "form" : form
@@ -108,7 +115,12 @@ def followingPage(request, username):
     paginator = Paginator(postsList, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+    x = defaultdict()
+    for post in postsList:
+        d = post.serialize()
+        # x[d["id"]].append(d["likers"])
+    print(x)
+    print("\n\n", d)
     # Randomly selected profiles
     pYouMayKnow = utils.getRandomProfiles(user)
     pAlsoViewed = utils.getRandomProfiles(user)
@@ -202,15 +214,26 @@ def editPost(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         content = data.get("content", "")
+        item = data.get("item", "")
         id = data.get("id", "")
-        try:
-            post = Post.objects.get(id=id)
-            post.content = content
-            post.save()
-        except Post.DoesNotExist :
-            print("Post does not exist")
-            return JsonResponse({"error" : "Couldn't find post"}, status=404)
-        return JsonResponse({"message" : "Post edited successfully"}, status=200)
+        
+        if item == 'post':
+            try:
+                post = Post.objects.get(id=id)
+                post.content = content
+                post.save()
+            except Post.DoesNotExist :
+                print("Post does not exist")
+                return JsonResponse({"error" : "Couldn't find post"}, status=404)
+            return JsonResponse({"message" : f"Post No. {id} edited successfully"}, status=200)
+        elif item == 'comment':
+            try:
+                comment = Comment.objects.get(id=id)
+                comment.comment = content
+                comment.save()
+            except Comment.DoesNotExist:
+                return JsonResponse({"error" : "Couldn't find comment"}, status=404)
+            return JsonResponse({"message" : f"Comment No. {id} edited successfully"}, status=200)
     
 def likePost(request, id):
     user = request.user
@@ -255,7 +278,8 @@ def deletePost(request, id):
     confirmation = data.get("confirmation", "")
     if confirmation == 'YES':
         item.delete()
-        return JsonResponse({"message" : f"{itemType.capitalize()} No. {id} has been deleted successfully"}, status=200)
+        return JsonResponse({"message" : f"{itemType.capitalize()} No. {id} has been deleted successfully"
+                             }, status=200)
     else:
         return JsonResponse({"message" : f"You have decided not to delete {itemType.capitalize()} No. {id}"}, status=200)
 
@@ -313,5 +337,12 @@ def uploadPage(request):
 
 def api(request):
     user = request.user
-    postsList = Post.objects.all()
-    return JsonResponse({"posts" : [post.serialize() for post in postsList]}, status=200)    
+    postsList = Post.objects.all().filter(user=3)
+    return JsonResponse({"posts" : [post.serialize() for post in postsList]}, status=200)   
+
+def getLikers(request, id):
+    user = request.user
+    post = Post.objects.get(id=id)
+    postInfo = post.serialize()
+    likers = postInfo["likers"]
+    return JsonResponse({"likers": likers}, status=200) 

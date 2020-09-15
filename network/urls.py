@@ -21,6 +21,7 @@ urlpatterns = [
     path("delpic", views.deleteProfilePic, name="delPic"),
     path("description", views.description, name="description"),
     path("api", views.api),
+    path("g/likers/<int:id>", views.getLikers),
     
     # Check last
     path("<slug:name>", views.profile, name="profile"),

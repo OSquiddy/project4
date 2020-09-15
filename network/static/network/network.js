@@ -24,6 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('#editDescription') != undefined)
         document.querySelector('#editDescription').onclick = () => { description() };
     
+    if(document.querySelector('.numLikes') != undefined){
+        document.querySelectorAll('.numLikes').forEach(post => {
+            if(post.dataset.numlikes == 0)
+                post.style.display = 'none';
+            post.onclick = function() {showLikesModal(this)};
+        });
+    }
+
+    if (document.querySelectorAll('.numComments') != undefined) {
+        document.querySelectorAll('.numComments').forEach(post => post.onclick = function () { showComments(this) });
+        document.querySelectorAll('.comment').forEach(post => post.onfocus = function () { showComments(this) }); 
+    }
+        
+    
 })
 
 function submitPost() {
@@ -55,8 +69,7 @@ function submitPost() {
                 <div class="col">
                     <div class="row">
                     <div class="col-1">
-                        <img src="${commentProfilePic}" id="commentProfilePic" alt="profile-pic"
-                            style="object-fit: cover; width: 1.825rem; height: 1.825rem; border-radius: 50%;">
+                        <img src="${commentProfilePic}" id="commentProfilePic" class="postProfilePicSmall" alt="profile-pic">
                     </div>
                     <div class="col-11 pl-0 align-self-end">
                         <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
@@ -84,15 +97,20 @@ function submitPost() {
                         <div class="postContent" id="post-${post.id}">${post.content}</div>
                     </div>
                 </div>
-                <div class="numLikes" data-numLikes="${post.likes}" id="numLikes-${post.id}">${post.likes} likes </div>
-                <div class="row optionRow" id="optionRow-${post.id}">
+                <div class="metaInfoRow d-flex justify-content-between ml-2 mr-3">
+                    <div class="numLikes" data-numLikes="${post.likes}" id="postLikes-${post.id}" data-id="${post.id}" data-type="post" style="display: none" onclick="showLikesModal(this);">${post.likes} likes </div>
+                    <div class="numComments" data-numComments="${post.numComments}" id="postComments-${post.id}" data-postID="${post.id}" data-type="post">${post.numComments} comments</div>
+                </div>
+                <div class="row postOptionRow" id="optionRow-${post.id}">
                     <span class="options likeButton ml-3" id="newLikeButton" data-item="post" data-id="post-${post.id}">
                         <i class="far fa-thumbs-up"></i> Like</span>
                     <span class="options" data-id="post-${post.id}" id="newCommentButton"><i class="far fa-comment"></i>
                         Comment</span>
                     <span class="options" data-id="post-${post.id}"><i class="fas fa-share"></i> Share</span>
-                    <span class="options editButton" data-item="post" data-id="post-${post.id}" id="newEditButton2"><i class="far fa-edit"></i>
-                        Edit</span>
+                </div>
+                <div class="commentsDisplay" id="commentsDisplay-${post.id}">
+                    <div class="commentContainer" style="display: none">
+                    </div>
                 </div>
                 <div class="row">
                         <div class="col my-3">
@@ -109,13 +127,14 @@ function submitPost() {
 
             document.querySelector('#newLikeButton').onclick = function () { like(this) };
             document.querySelector('#newEditButton').onclick = function () { edit(this) };
-            document.querySelector('#newEditButton2').onclick = function () { edit(this) };
             document.querySelector(`#deleteButton-${post.id}`).onclick = function() { deleteItem(this) };
+            document.querySelector('#newCommentBox').onfocus = function() { showComments(this) };
             document.querySelector('#newCommentBox').addEventListener('keyup', function (event) {
                 if (event.keyCode === 13) {
                     postComment(this);
                 }
-            })
+            });
+            document.querySelector(`#postComments-${post.id}`).onclick = function() { showComments(this) };
         })
         .catch(error => console.log(error));
 
@@ -181,7 +200,12 @@ function follow() {
         .catch(error => console.log(error))
 }
 
+
+
+
+
 function edit(post) {
+    console.log("entered edit()");
     const content = document.querySelector(`#${post.dataset.id}`).innerHTML;
     const item = post.dataset.item;
     let id = 0;
@@ -222,8 +246,9 @@ function edit(post) {
                 "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({
-                id: post.dataset.id.substring(5),
-                content: editedContent
+                id: id,
+                content: editedContent,
+                item: item
             })
         })
             .then(response => response.json())
@@ -263,16 +288,20 @@ function like(post) {
         // console.log(`Post No. ${id} has been liked.`);
         post.style.color = 'rgb(0, 123, 255)';
         if (item == 'post') {
-            numLikes = parseInt(document.querySelector(`#numLikes-${id}`).dataset.numlikes);
+            if (document.querySelector(`#postLikes-${id}`).style.display === 'none')
+                document.querySelector(`#postLikes-${id}`).style.display = 'block';
+            numLikes = parseInt(document.querySelector(`#postLikes-${id}`).dataset.numlikes);
             numLikes += 1;
-            document.querySelector(`#numLikes-${id}`).innerHTML = `${numLikes} likes`;
-            document.querySelector(`#numLikes-${id}`).dataset.numlikes = numLikes;
+            document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} likes`;
+            document.querySelector(`#postLikes-${id}`).dataset.numlikes = numLikes;
         }
         else if (item == 'comment') {
-            numLikes = parseInt(document.querySelector(`#commentNumLikes-${id}`).dataset.numlikes);
+            if (document.querySelector(`#commentLikes-${id}`).style.display === 'none')
+                document.querySelector(`#commentLikes-${id}`).style.display = 'block';
+            numLikes = parseInt(document.querySelector(`#commentLikes-${id}`).dataset.numlikes);
             numLikes += 1;
-            document.querySelector(`#commentNumLikes-${id}`).innerHTML = `${numLikes} likes`;
-            document.querySelector(`#commentNumLikes-${id}`).dataset.numlikes = numLikes;
+            document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes} likes`;
+            document.querySelector(`#commentLikes-${id}`).dataset.numlikes = numLikes;
         }
 
         //Send the user profile to be added to the post's likes
@@ -297,16 +326,22 @@ function like(post) {
         // console.log(`Post No. ${id} has been unliked.`);
         post.style.color = 'rgb(33, 37, 41)';
         if (item == 'post') {
-            numLikes = parseInt(document.querySelector(`#numLikes-${id}`).dataset.numlikes);
+            numLikes = parseInt(document.querySelector(`#postLikes-${id}`).dataset.numlikes);
             numLikes--;
-            document.querySelector(`#numLikes-${id}`).innerHTML = `${numLikes} likes`;
-            document.querySelector(`#numLikes-${id}`).dataset.numlikes = numLikes;
+            if (numLikes === 0)
+                document.querySelector(`#postLikes-${id}`).style.display = 'none';
+            document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} likes`;
+            document.querySelector(`#postLikes-${id}`).dataset.numlikes = numLikes;
+            
         }
         else if (item == 'comment') {
-            numLikes = parseInt(document.querySelector(`#commentNumLikes-${id}`).dataset.numlikes);
+            numLikes = parseInt(document.querySelector(`#commentLikes-${id}`).dataset.numlikes);
             numLikes--;
-            document.querySelector(`#commentNumLikes-${id}`).innerHTML = `${numLikes} likes`;
-            document.querySelector(`#commentNumLikes-${id}`).dataset.numlikes = numLikes;
+            if (numLikes === 0)
+                document.querySelector(`#commentLikes-${id}`).style.display = 'none';
+            document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes} likes`;
+            document.querySelector(`#commentLikes-${id}`).dataset.numlikes = numLikes;
+            
         }
 
         //Send the user profile to be removed from the post's likes
@@ -351,15 +386,17 @@ function postComment(commentBox) {
             const user = document.querySelector('#username').innerHTML;
             const img = result.comment.user.profilePic;
             let comment = result.comment;
+            let numComments = document.querySelector(`#postComments-${postID}`).dataset.numcomments;
+            numComments++;
+            document.querySelector(`#postComments-${postID}`).dataset.numcomments = numComments;
+            document.querySelector(`#postComments-${postID}`).innerHTML = `${numComments} comments`;
             const commentContainer = document.querySelector(`#commentsDisplay-${postID}`);
             commentContainer.insertAdjacentHTML('beforeend', `
             <div class="d-flex py-3 my-3 mx-3 commentContainer" id="commentContainer-${comment.id}">
                             <div class="col">
                                 <div class="row">
                                     <div class="col-1">
-                                        <img src="${img}" alt="profile-pic"
-                                            style="object-fit: cover; width: 1.5rem; height: 1.5rem; border-radius: 50%;"
-                                            class="commentProfilePic">
+                                        <img src="${img}" alt="profile-pic" class="commentProfilePicSmall">
                                     </div>
                                     <div class="col-11 px-0 align-self-end ml-n2">
                                         <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
@@ -374,11 +411,11 @@ function postComment(commentBox) {
                                                 <div class="dropdown-menu dropdown-menu-right"
                                                     aria-labelledby="dropdownMenuButton">
                                                     <span class="editButton dropdown-item" data-item="comment"
-                                                        data-id="comment-${comment.id}" id="newEditButton"><i
+                                                        data-id="comment-${comment.id}" onclick="edit(this);"><i
                                                             class="far fa-edit"></i>&nbsp;Edit</span>
                                                     <span class="deleteButton dropdown-item"
                                                         data-id="comment-${comment.id}" data-item="comment"
-                                                        id="deleteButton-${comment.id}" data-postID="post">&nbsp;<i
+                                                        id="deleteButton-${comment.id}" data-postID="post" data-container="${postID}">&nbsp;<i
                                                             class="fas fa-times"></i>&nbsp;&nbsp;Delete</span>
                                                 </div>
                                             </div>
@@ -389,24 +426,18 @@ function postComment(commentBox) {
                                         <div class="postContent" id="comment-${comment.id}">${comment.comment}</div>
                                     </div>
                                 </div>
-                                <div class="numLikes" data-numLikes="${comment.likes}" data-id="numLikes-${comment.id}" data-toggle="modal"
-                                data-target="#postLikesModal" id="commentNumLikes-${comment.id}">${comment.likes}
-                                    likes</div>
+                                <div class="numLikes" data-numLikes="${comment.likes}" data-type="comment" data-id="${comment.id}" id="commentLikes-${comment.id}" style="display:none">${comment.likes} likes</div>
                                 <div class="row optionRow" id="optionRow-${comment.id}">
-                                    <span class="options likeButton ml-3" data-id="comment-${comment.id}" data-item="comment" id="newCommentLikeButton">
+                                    <span class="options likeButton ml-3" data-id="comment-${comment.id}" data-item="comment" id="newCommentLikeButton" onclick="like(this)">
                                         <i class="far fa-thumbs-up"></i> Like</span>
                                     <span class="options" data-id="comment-${comment.id}"><i class="far fa-comment"></i>
                                         Comment</span>
-                                    <span class="options editButton" data-id="comment-${comment.id}" id="newEditButton2" data-item="comment"><i
-                                            class="far fa-edit"></i> Edit</span>
                                 </div>
                             </div>
                         </div>
             `);
             commentBox.value = '';
-            document.querySelector('#newCommentLikeButton').onclick = function () { like(this) };
-            document.querySelector('#newEditButton').onclick = function () { edit(this) };
-            document.querySelector('#newEditButton2').onclick = function () { edit(this) };
+            
             document.querySelector(`#deleteButton-${comment.id}`).onclick = function() { deleteItem(this) };
         })
         .catch(error => console.log(error))
@@ -440,6 +471,13 @@ function deleteItem(post) {
             .then(response => response.json())
             .then(result => {
                 console.log(result);
+                let postID = post.dataset.container;
+                if (document.querySelector(`#postComments-${postID}`) != undefined) {
+                    let numComments = document.querySelector(`#postComments-${postID}`).dataset.numcomments;
+                    numComments--;
+                    document.querySelector(`#postComments-${postID}`).dataset.numcomments = numComments;
+                    document.querySelector(`#postComments-${postID}`).innerHTML = `${numComments} comments`;
+                }
             })
             .catch(error => console.log(error));
         document.querySelector(`#${post.dataset.item}Container-${id}`).remove();
@@ -457,13 +495,32 @@ function deleteProfilePic() {
     .catch(error => console.log(error));
 }
 
+/**
+ * This handles the About section on a profile page. 
+ * If it is empty (equal to ' '), its display is set to none by default
+ */
 function description() {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    let description = document.querySelector('#description').innerHTML;
+    let description;
+    /**
+     * The first time a description is entered, the #descriptionText element is created along
+     *  with some other elements inside the #description element.
+     * If #descriptionText is present, then we want the text present inside this div.
+     * 
+     * If it does not exist, then it means that the first description is yet to be entered. 
+     * In this case, we need the contents of the #description element.
+     */
+    if (document.querySelector('#descriptionText') != undefined)
+        description = document.querySelector('#descriptionText').innerText;
+    else
+        description = document.querySelector('#description').innerText;
     let id = document.querySelector('#descriptionButton').dataset.id;
+    // Show the descriptionContainer.
     document.querySelector(`#descriptionContainer-${id}`).style.display = 'flex';
 
+    // If the description was empty, generate an empty <textarea> called #descriptionText and hide the edit button.
     if (description == "") {
+        document.querySelector('#editDescription').style.display = 'none';
         document.querySelector('#description').innerHTML = `<textarea rows="5" style="margin:0 auto 10px; width: 100%; padding: 9px" id="descriptionText"></textarea>
         <div class="d-flex dOptionRow justify-content-end">
             <button class="btn btn-primary mx-1" id="dSubmitButton">Submit</button>
@@ -471,6 +528,7 @@ function description() {
         </div>
     `;
     }
+    // Otherwise populate the new textarea with existing data
     else {
         document.querySelector('#description').innerHTML = `<textarea rows="5" style="margin:0 auto 10px; width: 100%; padding: 9px" id="descriptionText"  onfocus="var value = this.value.trim(); this.value = null; this.value = value;" autofocus>${description}</textarea>
         <div class="d-flex dOptionRow justify-content-end">
@@ -481,7 +539,10 @@ function description() {
     }
     
     
-
+    /**
+     * If the <textarea> is empty when you cancel, hide the About section (descriptionContainer).
+     * Otherwise overwrite the new innerHTML with the previous description.
+     */
     document.querySelector('#dCancelButton').onclick = () => {
         if (description == "")
             document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
@@ -489,6 +550,7 @@ function description() {
             document.querySelector('#description').innerHTML = description;
     }
 
+    // Asynchronous submission of the description using the Fetch API
     document.querySelector('#dSubmitButton').onclick = () => {
         fetch('/description', {
             method: "POST",
@@ -504,9 +566,23 @@ function description() {
         .then(response => response.json())
         .then(result => {
             console.log(result);
+            /**
+             * The api returns a JSON object containing a message and also includes the description
+             * that was submitted. 
+             * 
+             * If the description was an empty string '' (ie. user deleted all text)
+             * then the displayContainer is hidden, and the 'Add a description' button is shown again
+             * 
+             * Otherwise, if the description was a non-empty string, the text inside the #description element
+             * is substituted with the description. The edit icon on the right side of the container is made 
+             * visible, and the 'Add a description' button is hidden.
+             */
             if(result.description == "") {
+                document.querySelector('#description').innerHTML = result.description;
                 document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
                 document.querySelector('#descriptionButton').innerText = 'Add a description';
+                if(document.querySelector('#descriptionButton').style.display === 'none')
+                    document.querySelector('#descriptionButton').style.display = 'inline-block';
             }
             else {
                 document.querySelector('#description').innerHTML = result.description;
@@ -517,4 +593,35 @@ function description() {
         })
         .catch(error => console.log(error));
     }
+}
+
+function showLikesModal(post) {
+    const postID = post.dataset.id;
+    fetch(`/g/likers/${postID}`)
+    .then(response => response.json())
+    .then(result => {
+        console.log(result);
+        document.querySelector('#likersModalBody').innerHTML = '';
+        modalBody = document.querySelector('#likersModalBody');
+        
+        result.likers.forEach(liker => {
+            let likerDiv = document.createElement('div');
+            likerDiv.className = "liker mb-2";
+            likerDiv.innerHTML = `
+            <img src="${liker["profilePic"]}" alt="profile-pic" class="modalProfilePic">
+            <span><a href="/"> ${liker["username"]} </a></span>
+            `;
+            modalBody.append(likerDiv);
+            $('#postLikesModal').modal('show');
+        })
+    })
+    .catch(error => console.log(error));
+}
+
+function showComments(numComments_Button) {
+    const id = numComments_Button.dataset.postid;
+    if (document.querySelector(`#commentsDisplay-${id}`).style.display === 'block' && numComments_Button.className !== 'comment')
+        document.querySelector(`#commentsDisplay-${id}`).style.display = 'none';
+    else
+        document.querySelector(`#commentsDisplay-${id}`).style.display = 'block';
 }
