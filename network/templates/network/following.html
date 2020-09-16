@@ -44,6 +44,58 @@
     </div>
 </div>
 
+<!-- Share Post Modal  -->
+<div class="modal fade" id="sharePostModal" tabindex="-1" aria-labelledby="sharePostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sharePostModalLabel">Share Post</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Placeholder Text -->
+                <div class="d-flex py-3 my-3 postContainer" id="postContainer-{{post.id}}">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-1">
+                                {% if request.user.profilePic %}
+                                <img class="postProfilePicSmall" src="{{request.user.profilePic.url}}" alt="profile-pic">
+                                {% else %}
+                                <img class="postProfilePicSmall" src="{% static 'network/images/defaultAvatar.png' %}"
+                                    alt="profile-pic">
+                                {% endif %}
+                            </div>
+                            <div class="col-11 pl-4 align-self-end">
+                                <span style="font-size: 1.05rem;" id="postUser-{{post.id}}" style="display: inline-block;">
+                                    <a href="{% url 'profile' request.user %}"
+                                        class="userProfileLink">{{request.user|capfirst}}</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <form action="" method="post" id="sharePostForm" name="sharePostForm" style="width:100%">
+                                {% csrf_token %}
+                                <textarea name="sharePostText" id="sharePostText" rows="4" placeholder="Say something about this..." style="width: 100%;"></textarea>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; color: grey; display: none;" id="shareModalMessage">
+                    This feature has not yet been added. This is just a placeholder model.
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="shareModalSubmit">Share</button>
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Body -->
 <div class="container" style="max-width: 85%;">
     <div class="row p-0 mt-5">
         <div class="col-md-2" style="font-size: 0.9rem">
@@ -101,8 +153,7 @@
                                     <a href="{% url 'profile' post.user %}"
                                         class="userProfileLink">{{post.user|capfirst}}</a>
                                 </span>
-                                <!-- <div class="btn" style=" float:right"><i class="fas fa-chevron-down"></i>
-                    </div> -->
+                                
                                 {% if post.user == request.user %}
                                 <div class="dropdown d-inline-flex" style=" float:right">
                                     <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -126,25 +177,25 @@
                             </div>
                         </div>
                         
-                        <div class="metaInfoRow d-flex justify-content-between mx-4">
+                        <div class="metaInfoRow d-flex justify-content-between">
                             <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post"> {{post.allLikes|length}} likes </div>
                             <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="comment">{{post.comments|length}} comments</div>
                         </div>
                         
                         <div class="row postOptionRow" id="optionRow-{{post.id}}">
                             {% if request.user.username in post.allLikes %}
-                            <span class="options likeButton ml-3" data-id="post-{{post.id}}" style="color: #007bff"
+                            <span class="options flex-fill text-center likeButton ml-3" data-id="post-{{post.id}}" style="color: #007bff"
                                 data-item="post">
                                 <i class="far fa-thumbs-up"></i> Like</span>
                             {% else %}
-                            <span class="options likeButton ml-3" data-id="post-{{post.id}}" data-item="post">
+                            <span class="options flex-fill text-center likeButton ml-3" data-id="post-{{post.id}}" data-item="post">
                                 <i class="far fa-thumbs-up"></i> Like</span>
                             {% endif %}
-                            <span class="options commentButton" data-id="{{post.id}}" onclick="focusComment(this);"><i class="far fa-comment"></i> Comment</span>
-                            <span class="options" data-id="post-{{post.id}}"><i class="fas fa-share"></i> Share</span>
+                            <span class="options flex-fill text-center commentButton" data-id="{{post.id}}" onclick="focusComment(this);"><i class="far fa-comment"></i> Comment</span>
+                            <span class="options flex-fill text-center shareButton" data-id="post-{{post.id}}"><i class="fas fa-share"></i> Share</span>
                         </div>
 
-                        <div class="row mx-3">
+                        <div class="row">
                             <div class="col-1 align-self-center justify-content-center inputProfilePicContainer">
                                 {% if request.user.profilePic %}
                                 <img class="postProfilePicSmall" width="30" height="30"
@@ -157,14 +208,13 @@
                             </div>
                             <div class="col-11 my-3">
                                 {% csrf_token %}
-                                <input class="comment" data-postID="{{post.id}}" type="text" placeholder="Write a comment..." id="commentInput-{{post.id}}"
-                                    style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey">
+                                <input class="comment" data-postID="{{post.id}}" type="text" placeholder="Write a comment..." id="commentInput-{{post.id}}" >
                             </div>
                         </div>
 
                         <div class="commentsDisplay" id="commentsDisplay-{{post.id}}">
                             {% for comment in post.comments %}
-                            <div class="d-flex my-3 mx-3 " id="commentContainer-{{comment.id}}">
+                            <div class="row my-3 " id="commentContainer-{{comment.id}}">
                                 <div class="col-1">
                                     {% if comment.user.profilePic %}
                                     <img src="{{comment.user.profilePic.url}}" alt="profile-pic"

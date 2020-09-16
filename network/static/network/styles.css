@@ -4,7 +4,7 @@ body {
 }
 
 .postContent {
-    margin: 15px 5px;
+    margin: 15px 0px;
 }
 
 #content {
@@ -21,7 +21,7 @@ body {
 .options {
     font-size: 1rem;
     padding: 5px 10px;
-    margin: 0 5px;
+    margin: 0;
 }
 
 .options:hover, .options-comment:hover {
@@ -41,7 +41,7 @@ body {
     border-top: 1px solid lightgrey;
     border-bottom: 1px solid lightgrey;
     padding: 5px 0;
-    margin: 0 24px 20px;
+    margin: 0;
 }
 
 .commentOptionRow {
@@ -50,11 +50,19 @@ body {
 
 .metaInfoRow {
     padding: 5px 0;
+    margin: 0 !important;
 }
 
+.comment {
+    background-color: #f0f2f5;
+    width: 100%; 
+    padding: 7px 15px; 
+    border-radius: 50px;
+    border: none !important;
+}
 .comment:focus {
     outline: none;
-    border-color: #227bff !important;
+    /* border-color: #227bff !important; */
 }
 
 .fCountStyle {
@@ -306,4 +314,15 @@ body {
 
 .fa-chevron-down {
     vertical-align: middle;
+}
+
+#sharePostText {
+    width: 100%; 
+    border: none; 
+    padding: 15px; 
+    margin: auto;
+}
+
+#sharePostText:focus {
+    outline: none;
 }

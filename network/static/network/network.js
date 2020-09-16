@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
             post.onclick = function () { showLikesModal(this) };
         });
     }
+
+    if (document.querySelector('.shareButton') != undefined) {
+        document.querySelectorAll('.shareButton').forEach(post => {
+            post.onclick = function () { sharePost(this) };
+        });
+    }
     // if (document.querySelector('#commentButton') != undefined) 
     //     document.querySelectorAll('#commentButton').forEach(button => button.onclick = function() {
     //         const id = this.dataset.id;
@@ -75,7 +81,7 @@ function submitPost() {
                     <div class="col-1">
                         <img src="${commentProfilePic}" id="commentProfilePic" class="postProfilePicSmall" alt="profile-pic">
                     </div>
-                    <div class="col-11 pl-0 align-self-end">
+                    <div class="col-11 pl-2 align-self-end">
                         <span style="font-size: 1.05rem;" id="postUser-${post.id}" style="display: inline-block;">
                             <a href="${userProfileLink}">
                             ${post.user.username.charAt(0).toUpperCase() + post.user.username.slice(1)}
@@ -101,28 +107,31 @@ function submitPost() {
                         <div class="postContent" id="post-${post.id}">${post.content}</div>
                     </div>
                 </div>
-                <div class="metaInfoRow d-flex justify-content-between ml-2 mr-3">
-                    <div class="numLikes" data-numLikes="${post.likes}" id="postLikes-${post.id}" data-id="${post.id}" data-type="post" style="display: none" onclick="showLikesModal(this);">${post.likes} likes </div>
-                    <div class="numComments" data-numComments="${post.numComments}" id="postComments-${post.id}" data-postID="${post.id}" data-type="post">${post.numComments} comments</div>
+                <div class="metaInfoRow d-flex justify-content-between">
+                    <div class="numLikes" data-numLikes="${post.likes}" id="postLikes-${post.id}" data-id="${post.id}" data-item="post" style="display: none" onclick="showLikesModal(this);">${post.likes} likes </div>
+                    <div class="numComments" data-numComments="${post.numComments}" id="postComments-${post.id}" data-postID="${post.id}" data-item="post" style="display: block;">${post.numComments} comments</div>
                 </div>
                 <div class="row postOptionRow" id="optionRow-${post.id}">
-                    <span class="options likeButton ml-3" id="newLikeButton" data-item="post" data-id="post-${post.id}">
+                    <span class="options flex-fill text-center likeButton ml-3" id="newLikeButton" data-item="post" data-id="post-${post.id}">
                         <i class="far fa-thumbs-up"></i> Like</span>
-                    <span class="options" data-id="post-${post.id}" id="newCommentButton"><i class="far fa-comment"></i>
+                    <span class="options flex-fill text-center" data-id="${post.id}" id="newCommentButton" onclick="focusComment(this);"><i class="far fa-comment"></i>
                         Comment</span>
-                    <span class="options" data-id="post-${post.id}"><i class="fas fa-share"></i> Share</span>
+                    <span class="options flex-fill text-center" data-id="post-${post.id}" id="newShareButton"><i class="fas fa-share"></i> Share</span>
                 </div>
-                <div class="commentsDisplay" id="commentsDisplay-${post.id}">
-                    <div class="commentContainer" style="display: none">
-                    </div>
-                </div>
+
                 <div class="row">
-                        <div class="col my-3">
-                            <input class="comment" data-postID="${post.id}" type="text"
-                                placeholder="Write a comment..."
-                                style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey" id="newCommentBox">
+                        <div class="col-1 align-self-center justify-content-center inputProfileContainer">
+                            <img class="postProfilePicSmall"
+                            src="${commentProfilePic}"
+                            alt="profile-pic">
+                        </div>
+                        <div class="col-11 my-3">
+                            <input class="comment" data-postID="${post.id}" type="text" id="commentInput-${post.id}" placeholder="Write a comment..." >
                         </div>
                     </div>
+
+                <div class="commentsDisplay" id="commentsDisplay-${post.id}">
+                    <div class="commentContainer" style="display: none"> </div>
                 </div>
             </div> `);
 
@@ -132,13 +141,14 @@ function submitPost() {
             document.querySelector('#newLikeButton').onclick = function () { like(this) };
             document.querySelector('#newEditButton').onclick = function () { edit(this) };
             document.querySelector(`#deleteButton-${post.id}`).onclick = function () { deleteItem(this) };
-            document.querySelector('#newCommentBox').onfocus = function () { showComments(this) };
-            document.querySelector('#newCommentBox').addEventListener('keyup', function (event) {
+            document.querySelector(`#newShareButton`).onclick = function() { sharePost(this) };
+            document.querySelector(`#postComments-${post.id}`).onclick = function () { showComments(this) };
+            document.querySelector(`#commentInput-${post.id}`).onfocus = function () { showComments(this) };
+            document.querySelector(`#commentInput-${post.id}`).addEventListener('keyup', function (event) {
                 if (event.keyCode === 13) {
                     postComment(this);
                 }
             });
-            document.querySelector(`#postComments-${post.id}`).onclick = function () { showComments(this) };
         })
         .catch(error => console.log(error));
 
@@ -399,15 +409,15 @@ function postComment(commentBox) {
             document.querySelector(`#postComments-${postID}`).dataset.numcomments = numComments;
             document.querySelector(`#postComments-${postID}`).innerHTML = `${numComments} comments`;
             const commentContainer = document.querySelector(`#commentsDisplay-${postID}`);
-            commentContainer.insertAdjacentHTML('beforebegin', `
-            <div class="d-flex my-3 mx-3" id="commentContainer-${comment.id}">
+            commentContainer.insertAdjacentHTML('afterbegin', `
+            <div class="row my-3" id="commentContainer-${comment.id}">
                     <div class="col-1">
                         <img src="${img}" alt="profile-pic" class="commentProfilePicSmall">
                     </div>
                     <div class="col-11">
                         <div class="commentContainer px-3 pt-2">
                             <div class="row">
-                                <div class="col px-0 align-self-end ml-n2">
+                                <div class="col align-self-end">
                                     <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
                                         <a href="/${user}"
                                             class="userProfileLink">${user.charAt(0).toUpperCase() + user.slice(1)}</a>
@@ -647,6 +657,9 @@ function focusComment(post) {
     document.querySelector(`#commentInput-${id}`).focus();
 }
 
-// function sharePost() {
-
-// }
+function sharePost() {
+    $('#sharePostModal').modal('show');
+    document.querySelector('#shareModalSubmit').onclick = () => {
+        document.querySelector('#shareModalMessage').style.display = 'inline'
+    };
+}
