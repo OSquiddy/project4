@@ -34,14 +34,52 @@
                 </button>
             </div>
             <div class="modal-body" id="likersModalBody">
-                {% for user in post.serialize.likers %}
-                <div class="follower">
-                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
-                        class="commentProfilePic">
-                    {{user}}
+                <!-- Placeholder Text -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share Post Modal  -->
+<div class="modal fade" id="sharePostModal" tabindex="-1" aria-labelledby="sharePostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sharePostModalLabel">Likers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Placeholder Text -->
+                <div class="d-flex py-3 my-3 postContainer" id="postContainer-{{post.id}}">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-1">
+                                {% if post.user.profilePic %}
+                                <img class="postProfilePicSmall" src="{{post.user.profilePic.url}}" alt="profile-pic">
+                                {% else %}
+                                <img class="postProfilePicSmall" src="{% static 'network/images/defaultAvatar.png' %}"
+                                    alt="profile-pic">
+                                {% endif %}
+                            </div>
+                            <div class="col-11 pl-2 align-self-end">
+                                <span style="font-size: 1.05rem;" id="postUser-{{post.id}}" style="display: inline-block;">
+                                    <a href="{% url 'profile' post.user %}"
+                                        class="userProfileLink">{{post.user|capfirst}}</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <textarea name="sharePostText" id="sharePostText" rows="4" placeholder="Write here..."></textarea>
+                        </div>
+                    </div>
                 </div>
-                {% endfor %}
+
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
@@ -61,16 +99,12 @@
                             style="width: 102%; object-fit: cover;">
                     </div>
                     <div class="d-flex justify-content-center">
-                        <!-- <div class="d-flex mx-auto"
-                            style="z-index: 50; background-color: lightpink; width: 44%; height: 70px; border-radius: 155px;  margin-top: -35px; border: 2px solid white; margin-bottom: 5px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;"> -->
                         {% if request.user.profilePic %}
                         <img id="smallProfilePic" src="{{request.user.profilePic.url}}" alt="profile-pic">
                         {% else %}
                         <img id="smallProfilePic" src="{% static 'network/images/defaultAvatar.png' %}"
                             alt="profile-pic">
                         {% endif %}
-
-                        <!-- </div> -->
                     </div>
                     <div class="mb-3 mt-3 text-center">
                         <span style="font-size: 1.125rem; font-weight: 500;">{{request.user.first_name|capfirst}}
@@ -145,8 +179,8 @@
                                     alt="profile-pic">
                                 {% endif %}
                             </div>
-                            <div class="col-11 pl-0 align-self-end">
-                                <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
+                            <div class="col-11 pl-2 align-self-end">
+                                <span style="font-size: 1.05rem;" id="postUser-{{post.id}}" style="display: inline-block;">
                                     <a href="{% url 'profile' post.user %}"
                                         class="userProfileLink">{{post.user|capfirst}}</a>
                                 </span>
@@ -174,9 +208,9 @@
                                 <div class="postContent" id="post-{{post.id}}">{{post.content}}</div>
                             </div>
                         </div>
-                        <div class="metaInfoRow d-flex justify-content-between ml-2 mr-3">
-                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-type="post"> {{post.allLikes|length}} likes </div>
-                            <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-type="post">{{post.comments|length}} comments</div>
+                        <div class="metaInfoRow d-flex justify-content-between mx-4">
+                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post"> {{post.allLikes|length}} likes </div>
+                            <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="post">{{post.comments|length}} comments</div>
                         </div>
                         <div class="row postOptionRow" id="optionRow-{{post.id}}">
                             {% if request.user.username in post.allLikes %}
@@ -187,15 +221,24 @@
                             <span class="options likeButton ml-3" data-id="post-{{post.id}}" data-item="post">
                                 <i class="far fa-thumbs-up"></i> Like</span>
                             {% endif %}
-                            <span class="options commentButton" data-id="post-{{post.id}}"><i class="far fa-comment"></i>
-                                Comment</span>
+                            <span class="options commentButton" data-id="{{post.id}}" onclick="focusComment(this);"><i class="far fa-comment"></i> Comment</span>
                             <span class="options" data-id="post-{{post.id}}"><i class="fas fa-share"></i> Share</span>
                         </div>
 
-                        <div class="row">
-                            <div class="col my-3">
+                        <div class="row mx-3">
+                            <div class="col-1 align-self-center justify-content-center inputProfilePicContainer">
+                                {% if request.user.profilePic %}
+                                <img class="postProfilePicSmall" width="30" height="30"
+                                    src="{{request.user.profilePic.url}}" alt="profile-pic">
+                                {% else %}
+                                <img class="postProfilePicSmall"
+                                    src="{% static 'network/images/defaultAvatar.png' %}"
+                                    alt="profile-pic">
+                                {% endif %}
+                            </div>
+                            <div class="col-11 my-3">
                                 {% csrf_token %}
-                                <input class="comment" data-postID="{{post.id}}" type="text" placeholder="Write a comment..."
+                                <input class="comment" data-postID="{{post.id}}" type="text" id="commentInput-{{post.id}}" placeholder="Write a comment..."
                                     style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey">
                             </div>
                         </div>
@@ -216,7 +259,7 @@
                                     <div class="commentContainer px-3 pt-2">
                                         <div class="row">
                                         
-                                            <div class="col pr-0 align-self-end">
+                                            <div class="col align-self-end">
                                                 <span style="font-size: 1.05rem;" id="postUser"
                                                     style="display: inline-block;">
                                                     <a href="{% url 'profile' comment.user.username %}"
@@ -264,7 +307,7 @@
                                         <i id="commentLikeIcon-{{comment.id}}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;"></i>
                                         {% endif %}
                                         <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="{{comment.allLikes|length}}"
-                                            data-id="{{comment.id}}" data-type="comment" id="commentLikes-{{comment.id}}">
+                                            data-id="{{comment.id}}" data-item="comment" id="commentLikes-{{comment.id}}">
                                             {{comment.allLikes|length}}
                                         </span>
                                         <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>

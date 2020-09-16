@@ -41,7 +41,7 @@ body {
     border-top: 1px solid lightgrey;
     border-bottom: 1px solid lightgrey;
     padding: 5px 0;
-    margin: 0 15px;
+    margin: 0 24px 20px;
 }
 
 .commentOptionRow {
@@ -298,4 +298,12 @@ body {
     object-fit: cover;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+/* .userProfileLink {
+    vertical-align: -webkit-baseline-middle;
+} */
+
+.fa-chevron-down {
+    vertical-align: middle;
 }

@@ -293,7 +293,7 @@
 
                                         </div>
                                         <div class="col-lg-11 col-md-10 pl-0 align-self-end">
-                                            <span style="font-size: 1.25rem;" id="postUser"
+                                            <span style="font-size: 1.25rem;" id="postUser-{{post.id}}"
                                                 style="display: inline-block;">
                                                 <a href="{% url 'profile' post.user %}"
                                                     class="userProfileLink">{{post.user|capfirst}}</a>
@@ -320,12 +320,12 @@
                                             <div class="postContent" id="post-{{post.id}}">{{post.content}}</div>
                                         </div>
                                     </div>
-                                    <div class="metaInfoRow d-flex justify-content-between ml-2 mr-3">
+                                    <div class="metaInfoRow d-flex justify-content-between mx-4">
                                         <div class="numLikes" data-numLikes="{{post.allLikes|length}}"
-                                            id="postLikes-{{post.id}}" data-id="{{post.id}}" data-type="post">
+                                            id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post">
                                             {{post.allLikes|length}} likes </div>
                                         <div class="numComments" data-numComments="{{post.comments|length}}"
-                                            id="postComments-{{post.id}}" data-postID="{{post.id}}" data-type="post">
+                                            id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="comment">
                                             {{post.comments|length}} comments</div>
                                     </div>
                                     <div class="row postOptionRow" id="optionRow-{{post.id}}">
@@ -338,17 +338,25 @@
                                             data-item="post">
                                             <i class="far fa-thumbs-up"></i> Like</span>
                                         {% endif %}
-                                        <span class="options commentButton" data-id="post-{{post.id}}"><i
-                                                class="far fa-comment"></i>
-                                            Comment</span>
+                                        <span class="options commentButton" data-id="{{post.id}}" onclick="focusComment(this);"><i class="far fa-comment"></i> Comment</span>
                                         <span class="options" data-id="post-{{post.id}}"><i class="fas fa-share"></i>
                                             Share</span>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col my-3">
+                                    <div class="row mx-3">
+                                        <div class="col-1 align-self-center justify-content-center inputProfilePicContainer">
+                                            {% if request.user.profilePic %}
+                                            <img class="postProfilePicSmall" width="30" height="30"
+                                                src="{{request.user.profilePic.url}}" alt="profile-pic">
+                                            {% else %}
+                                            <img class="postProfilePicSmall"
+                                                src="{% static 'network/images/defaultAvatar.png' %}"
+                                                alt="profile-pic">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-11 my-3">
                                             <input class="comment" data-postID="{{post.id}}" type="text"
-                                                placeholder="Write a comment..."
+                                                placeholder="Write a comment..." id="commentInput-{{post.id}}"
                                                 style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey">
                                         </div>
                                     </div>
@@ -370,7 +378,7 @@
                                             <div class="col-11">
                                                 <div class="commentContainer px-3 pt-2">
                                                     <div class="row">
-                                                        <div class="col pr-0 align-self-end">
+                                                        <div class="col align-self-end">
                                                             <span style="font-size: 1.25rem;" id="postUser"
                                                                 style="display: inline-block;">
                                                                 <a href="{% url 'profile' comment.user.username %}"
@@ -430,7 +438,7 @@
                                                     <span class="numLikes align-self-center pr-2"
                                                         style="font-size: 0.775rem;"
                                                         data-numLikes="{{comment.allLikes|length}}"
-                                                        data-id="{{comment.id}}" data-type="comment"
+                                                        data-id="{{comment.id}}" data-item="comment"
                                                         id="commentLikes-{{comment.id}}">
                                                         {{comment.allLikes|length}}
                                                     </span>

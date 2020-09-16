@@ -100,4 +100,5 @@ class Comment(models.Model):
             "likes" : len(self.allLikes()),
             "post" : self.post.serialize(),
             "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
+            "likers" : [user.serialize() for user in self.likes.all()],
         }

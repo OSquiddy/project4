@@ -35,14 +35,7 @@
                 </button>
             </div>
             <div class="modal-body" id="likersModalBody">
-                {% for user in post.serialize.likers %}
-                <div class="follower">
-                    <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                        style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
-                        class="commentProfilePic">
-                    {{user}}
-                </div>
-                {% endfor %}
+                <!-- Placeholder Text -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
@@ -103,8 +96,8 @@
                                 <img class="postProfilePicSmall" src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic">
                                 {% endif %}
                             </div>
-                            <div class="col-11 pl-0 align-self-end">
-                                <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
+                            <div class="col-11 pl-2 align-self-end">
+                                <span style="font-size: 1.05rem;" id="postUser-{{post.id}}" style="display: inline-block;">
                                     <a href="{% url 'profile' post.user %}"
                                         class="userProfileLink">{{post.user|capfirst}}</a>
                                 </span>
@@ -133,9 +126,9 @@
                             </div>
                         </div>
                         
-                        <div class="metaInfoRow d-flex justify-content-between ml-2 mr-3">
-                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-type="post"> {{post.allLikes|length}} likes </div>
-                            <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-type="post">{{post.comments|length}} comments</div>
+                        <div class="metaInfoRow d-flex justify-content-between mx-4">
+                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post"> {{post.allLikes|length}} likes </div>
+                            <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="comment">{{post.comments|length}} comments</div>
                         </div>
                         
                         <div class="row postOptionRow" id="optionRow-{{post.id}}">
@@ -147,16 +140,24 @@
                             <span class="options likeButton ml-3" data-id="post-{{post.id}}" data-item="post">
                                 <i class="far fa-thumbs-up"></i> Like</span>
                             {% endif %}
-                            <span class="options" data-id="post-{{post.id}}"><i class="far fa-comment"></i>
-                                Comment</span>
+                            <span class="options commentButton" data-id="{{post.id}}" onclick="focusComment(this);"><i class="far fa-comment"></i> Comment</span>
                             <span class="options" data-id="post-{{post.id}}"><i class="fas fa-share"></i> Share</span>
                         </div>
 
-                        <div class="row">
-                            <div class="col my-3">
+                        <div class="row mx-3">
+                            <div class="col-1 align-self-center justify-content-center inputProfilePicContainer">
+                                {% if request.user.profilePic %}
+                                <img class="postProfilePicSmall" width="30" height="30"
+                                    src="{{request.user.profilePic.url}}" alt="profile-pic">
+                                {% else %}
+                                <img class="postProfilePicSmall"
+                                    src="{% static 'network/images/defaultAvatar.png' %}"
+                                    alt="profile-pic">
+                                {% endif %}
+                            </div>
+                            <div class="col-11 my-3">
                                 {% csrf_token %}
-                                <input class="comment" data-postID="{{post.id}}" type="text"
-                                    placeholder="Write a comment..."
+                                <input class="comment" data-postID="{{post.id}}" type="text" placeholder="Write a comment..." id="commentInput-{{post.id}}"
                                     style="width: 100%; padding: 7px 15px; border-radius: 50px; border: 1px solid lightgrey">
                             </div>
                         </div>
@@ -177,7 +178,7 @@
                                     <div class="commentContainer px-3 pt-2">
                                         <div class="row">
                                         
-                                            <div class="col pr-0 align-self-end">
+                                            <div class="col align-self-end">
                                                 <span style="font-size: 1.05rem;" id="postUser"
                                                     style="display: inline-block;">
                                                     <a href="{% url 'profile' comment.user.username %}"
@@ -225,7 +226,7 @@
                                         <i id="commentLikeIcon-{{comment.id}}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;"></i>
                                         {% endif %}
                                         <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="{{comment.allLikes|length}}"
-                                            data-id="{{comment.id}}" data-type="comment" id="commentLikes-{{comment.id}}"> {{comment.allLikes|length}}
+                                            data-id="{{comment.id}}" data-item="comment" id="commentLikes-{{comment.id}}"> {{comment.allLikes|length}}
                                         </span>
                                         <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>
                                         <span class="options-comment" data-id="comment-{{comment.id}}"><i

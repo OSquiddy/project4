@@ -340,9 +340,17 @@ def api(request):
     postsList = Post.objects.all().filter(user=3)
     return JsonResponse({"posts" : [post.serialize() for post in postsList]}, status=200)   
 
-def getLikers(request, id):
+def getLikers(request, id, item):
     user = request.user
-    post = Post.objects.get(id=id)
-    postInfo = post.serialize()
-    likers = postInfo["likers"]
+    print(request.GET)
+    print("item = ", item)
+    item = item
+    if item == 'post':
+        post = Post.objects.get(id=id)
+        postInfo = post.serialize()
+        likers = postInfo["likers"]
+    if item == 'comment':
+        comment = Comment.objects.get(id=id)
+        commentInfo = comment.serialize()
+        likers = commentInfo["likers"]
     return JsonResponse({"likers": likers}, status=200) 

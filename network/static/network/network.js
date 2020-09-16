@@ -21,23 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#deleteProfilePic').onclick = function () { deleteProfilePic() };
     if (document.querySelector('#descriptionButton') != undefined)
         document.querySelector('#descriptionButton').onclick = () => { description() };
-        if (document.querySelector('#editDescription') != undefined)
+    if (document.querySelector('#editDescription') != undefined)
         document.querySelector('#editDescription').onclick = () => { description() };
-    
-    if(document.querySelector('.numLikes') != undefined){
+
+    if (document.querySelector('.numLikes') != undefined) {
         document.querySelectorAll('.numLikes').forEach(post => {
-            if(post.dataset.numlikes == 0)
+            if (post.dataset.numlikes == 0)
                 post.style.display = 'none';
-            post.onclick = function() {showLikesModal(this)};
+            post.onclick = function () { showLikesModal(this) };
         });
     }
-
+    // if (document.querySelector('#commentButton') != undefined) 
+    //     document.querySelectorAll('#commentButton').forEach(button => button.onclick = function() {
+    //         const id = this.dataset.id;
+    //         document.querySelector(`#commentInput-${id}`).focus();
+    //     })
     if (document.querySelectorAll('.numComments') != undefined) {
         document.querySelectorAll('.numComments').forEach(post => post.onclick = function () { showComments(this) });
-        document.querySelectorAll('.comment').forEach(post => post.onfocus = function () { showComments(this) }); 
+        document.querySelectorAll('.comment').forEach(post => post.onfocus = function () { showComments(this) });
     }
-        
-    
+
+
 })
 
 function submitPost() {
@@ -72,7 +76,7 @@ function submitPost() {
                         <img src="${commentProfilePic}" id="commentProfilePic" class="postProfilePicSmall" alt="profile-pic">
                     </div>
                     <div class="col-11 pl-0 align-self-end">
-                        <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
+                        <span style="font-size: 1.05rem;" id="postUser-${post.id}" style="display: inline-block;">
                             <a href="${userProfileLink}">
                             ${post.user.username.charAt(0).toUpperCase() + post.user.username.slice(1)}
                             </a>
@@ -127,14 +131,14 @@ function submitPost() {
 
             document.querySelector('#newLikeButton').onclick = function () { like(this) };
             document.querySelector('#newEditButton').onclick = function () { edit(this) };
-            document.querySelector(`#deleteButton-${post.id}`).onclick = function() { deleteItem(this) };
-            document.querySelector('#newCommentBox').onfocus = function() { showComments(this) };
+            document.querySelector(`#deleteButton-${post.id}`).onclick = function () { deleteItem(this) };
+            document.querySelector('#newCommentBox').onfocus = function () { showComments(this) };
             document.querySelector('#newCommentBox').addEventListener('keyup', function (event) {
                 if (event.keyCode === 13) {
                     postComment(this);
                 }
             });
-            document.querySelector(`#postComments-${post.id}`).onclick = function() { showComments(this) };
+            document.querySelector(`#postComments-${post.id}`).onclick = function () { showComments(this) };
         })
         .catch(error => console.log(error));
 
@@ -296,7 +300,7 @@ function like(post) {
             document.querySelector(`#postLikes-${id}`).dataset.numlikes = numLikes;
         }
         else if (item == 'comment') {
-            if (document.querySelector(`#commentLikes-${id}`).style.display === 'none') {
+            if (document.querySelector(`#commentLikes-${id}`).style.display === 'none' || document.querySelector(`#commentLikeIcon-${id}`).style.display === 'none') {
                 document.querySelector(`#commentLikeIcon-${id}`).style.display = 'block';
                 document.querySelector(`#commentLikes-${id}`).style.display = 'block';
             }
@@ -334,7 +338,7 @@ function like(post) {
                 document.querySelector(`#postLikes-${id}`).style.display = 'none';
             document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} likes`;
             document.querySelector(`#postLikes-${id}`).dataset.numlikes = numLikes;
-            
+
         }
         else if (item == 'comment') {
             numLikes = parseInt(document.querySelector(`#commentLikes-${id}`).dataset.numlikes);
@@ -345,7 +349,7 @@ function like(post) {
             }
             document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes} likes`;
             document.querySelector(`#commentLikes-${id}`).dataset.numlikes = numLikes;
-            
+
         }
 
         //Send the user profile to be removed from the post's likes
@@ -396,53 +400,60 @@ function postComment(commentBox) {
             document.querySelector(`#postComments-${postID}`).innerHTML = `${numComments} comments`;
             const commentContainer = document.querySelector(`#commentsDisplay-${postID}`);
             commentContainer.insertAdjacentHTML('beforebegin', `
-            <div class="d-flex py-3 my-3 mx-3 commentContainer" id="commentContainer-${comment.id}">
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col-1">
-                                        <img src="${img}" alt="profile-pic" class="commentProfilePicSmall">
-                                    </div>
-                                    <div class="col-11 px-0 align-self-end ml-n2">
-                                        <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
-                                            <a href="/${user}"
-                                                class="userProfileLink">${user.charAt(0).toUpperCase() + user.slice(1)}</a>
-                                        </span>
-                                        <div class="dropdown d-inline-flex" style=" float:right">
-                                                <button class="btn" type="button" id="dropdownMenuButton"
-                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-h"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuButton">
-                                                    <span class="editButton dropdown-item" data-item="comment"
-                                                        data-id="comment-${comment.id}" onclick="edit(this);"><i
-                                                            class="far fa-edit"></i>&nbsp;Edit</span>
-                                                    <span class="deleteButton dropdown-item"
-                                                        data-id="comment-${comment.id}" data-item="comment"
-                                                        id="deleteButton-${comment.id}" data-postID="post" data-container="${postID}">&nbsp;<i
-                                                            class="fas fa-times"></i>&nbsp;&nbsp;Delete</span>
-                                                </div>
-                                            </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="postContent" id="comment-${comment.id}">${comment.comment}</div>
+            <div class="d-flex my-3 mx-3" id="commentContainer-${comment.id}">
+                    <div class="col-1">
+                        <img src="${img}" alt="profile-pic" class="commentProfilePicSmall">
+                    </div>
+                    <div class="col-11">
+                        <div class="commentContainer px-3 pt-2">
+                            <div class="row">
+                                <div class="col px-0 align-self-end ml-n2">
+                                    <span style="font-size: 1.05rem;" id="postUser" style="display: inline-block;">
+                                        <a href="/${user}"
+                                            class="userProfileLink">${user.charAt(0).toUpperCase() + user.slice(1)}</a>
+                                    </span>
+                                    <div class="dropdown d-inline-flex" style=" float:right">
+                                        <button class="btn" type="button" id="dropdownMenuButton"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right"
+                                            aria-labelledby="dropdownMenuButton">
+                                            <span class="editButton dropdown-item" data-item="comment"
+                                                data-id="comment-${comment.id}" onclick="edit(this);"><i
+                                                    class="far fa-edit"></i>&nbsp;Edit</span>
+                                            <span class="deleteButton dropdown-item"
+                                                data-id="comment-${comment.id}" data-item="comment"
+                                                id="deleteButton-${comment.id}" data-postID="post" data-container="${postID}">&nbsp;<i class="fas fa-times"></i>&nbsp;&nbsp;Delete
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="numLikes" data-numLikes="${comment.likes}" data-type="comment" data-id="${comment.id}" id="commentLikes-${comment.id}" style="display:none">${comment.likes} likes</div>
-                                <div class="row optionRow" id="optionRow-${comment.id}">
-                                    <span class="options likeButton ml-3" data-id="comment-${comment.id}" data-item="comment" id="newCommentLikeButton" onclick="like(this)">
-                                        <i class="far fa-thumbs-up"></i> Like</span>
-                                    <span class="options" data-id="comment-${comment.id}"><i class="far fa-comment"></i>
-                                        Comment</span>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="postContent" id="comment-${comment.id}">${comment.comment}</div>
                                 </div>
                             </div>
                         </div>
+                        <div class="row commentOptionRow" id="optionRow-${comment.id}">
+                            <span class="options-comment likeButton ml-3" data-id="comment-${comment.id}" data-item="comment" onclick="like(this);"> Like </span>
+
+                            <i id="commentLikeIcon-${comment.id}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;"></i>
+
+                            <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="${comment.likes}" data-id="${comment.id}" data-type="comment" id="commentLikes-${comment.id}" onclick="showLikesModal(this)"> ${comment.likes}
+                            </span>
+
+                            <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>
+
+                            <span class="options-comment" data-id="comment-${comment.id}"><i class="far fa-comment"></i> Reply</span>
+                        </div>
+                    </div>
+            </div>
             `);
             commentBox.value = '';
-            
-            document.querySelector(`#deleteButton-${comment.id}`).onclick = function() { deleteItem(this) };
+
+            document.querySelector(`#deleteButton-${comment.id}`).onclick = function () { deleteItem(this) };
         })
         .catch(error => console.log(error))
 }
@@ -489,14 +500,14 @@ function deleteItem(post) {
 }
 
 function deleteProfilePic() {
-    
+
     fetch(`/delpic`)
-    .then(response => response.json())
-    .then(result => {
-        console.log(result);
-        document.querySelector('#profilePic').src = "/static/network/images/defaultAvatar.png";
-    })
-    .catch(error => console.log(error));
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+            document.querySelector('#profilePic').src = "/static/network/images/defaultAvatar.png";
+        })
+        .catch(error => console.log(error));
 }
 
 /**
@@ -541,8 +552,8 @@ function description() {
         </div>
         `;
     }
-    
-    
+
+
     /**
      * If the <textarea> is empty when you cancel, hide the About section (descriptionContainer).
      * Otherwise overwrite the new innerHTML with the previous description.
@@ -550,7 +561,7 @@ function description() {
     document.querySelector('#dCancelButton').onclick = () => {
         if (description == "")
             document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
-        else 
+        else
             document.querySelector('#description').innerHTML = description;
     }
 
@@ -560,66 +571,67 @@ function description() {
             method: "POST",
             mode: "same-origin",
             headers: {
-                "X-CSRFToken" : csrftoken
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({
                 description: document.querySelector('#descriptionText').value
             })
 
         })
-        .then(response => response.json())
-        .then(result => {
-            console.log(result);
-            /**
-             * The api returns a JSON object containing a message and also includes the description
-             * that was submitted. 
-             * 
-             * If the description was an empty string '' (ie. user deleted all text)
-             * then the displayContainer is hidden, and the 'Add a description' button is shown again
-             * 
-             * Otherwise, if the description was a non-empty string, the text inside the #description element
-             * is substituted with the description. The edit icon on the right side of the container is made 
-             * visible, and the 'Add a description' button is hidden.
-             */
-            if(result.description == "") {
-                document.querySelector('#description').innerHTML = result.description;
-                document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
-                document.querySelector('#descriptionButton').innerText = 'Add a description';
-                if(document.querySelector('#descriptionButton').style.display === 'none')
-                    document.querySelector('#descriptionButton').style.display = 'inline-block';
-            }
-            else {
-                document.querySelector('#description').innerHTML = result.description;
-                document.querySelector('#editDescription').style.display = 'flex';
-                document.querySelector('#descriptionButton').style.display = "none";
-            }
-            
-        })
-        .catch(error => console.log(error));
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                /**
+                 * The api returns a JSON object containing a message and also includes the description
+                 * that was submitted. 
+                 * 
+                 * If the description was an empty string '' (ie. user deleted all text)
+                 * then the displayContainer is hidden, and the 'Add a description' button is shown again
+                 * 
+                 * Otherwise, if the description was a non-empty string, the text inside the #description element
+                 * is substituted with the description. The edit icon on the right side of the container is made 
+                 * visible, and the 'Add a description' button is hidden.
+                 */
+                if (result.description == "") {
+                    document.querySelector('#description').innerHTML = result.description;
+                    document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
+                    document.querySelector('#descriptionButton').innerText = 'Add a description';
+                    if (document.querySelector('#descriptionButton').style.display === 'none')
+                        document.querySelector('#descriptionButton').style.display = 'inline-block';
+                }
+                else {
+                    document.querySelector('#description').innerHTML = result.description;
+                    document.querySelector('#editDescription').style.display = 'flex';
+                    document.querySelector('#descriptionButton').style.display = "none";
+                }
+
+            })
+            .catch(error => console.log(error));
     }
 }
 
 function showLikesModal(post) {
     const postID = post.dataset.id;
-    fetch(`/g/likers/${postID}`)
-    .then(response => response.json())
-    .then(result => {
-        console.log(result);
-        document.querySelector('#likersModalBody').innerHTML = '';
-        modalBody = document.querySelector('#likersModalBody');
-        
-        result.likers.forEach(liker => {
-            let likerDiv = document.createElement('div');
-            likerDiv.className = "liker mb-2";
-            likerDiv.innerHTML = `
+    const item = post.dataset.item;
+    fetch(`/g/likers/${postID}/i=${item}`)
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+            document.querySelector('#likersModalBody').innerHTML = '';
+            modalBody = document.querySelector('#likersModalBody');
+
+            result.likers.forEach(liker => {
+                let likerDiv = document.createElement('div');
+                likerDiv.className = "liker mb-2";
+                likerDiv.innerHTML = `
             <img src="${liker["profilePic"]}" alt="profile-pic" class="modalProfilePic">
             <span><a href="/"> ${liker["username"]} </a></span>
             `;
-            modalBody.append(likerDiv);
-            $('#postLikesModal').modal('show');
+                modalBody.append(likerDiv);
+                $('#postLikesModal').modal('show');
+            })
         })
-    })
-    .catch(error => console.log(error));
+        .catch(error => console.log(error));
 }
 
 function showComments(numComments_Button) {
@@ -629,3 +641,12 @@ function showComments(numComments_Button) {
     else
         document.querySelector(`#commentsDisplay-${id}`).style.display = 'block';
 }
+
+function focusComment(post) {
+    const id =  post.dataset.id;
+    document.querySelector(`#commentInput-${id}`).focus();
+}
+
+// function sharePost() {
+
+// }
