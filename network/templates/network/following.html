@@ -96,12 +96,12 @@
 </div>
 
 <!-- Main Body -->
-<div class="container" style="max-width: 85%;">
-    <div class="row p-0 mt-5">
-        <div class="col-md-2" style="font-size: 0.9rem">
-            <div class="row mb-4 pb-3" id="viewProfileTab"
+<div class="container" id="BodyContainer">
+    <div class="row p-0 mt-lg-5 mt-0">
+        <div class="col-md-2 px-0 px-md-3" style="font-size: 0.9rem" id="BodyContainerCol1" >
+            <div class="row mb-4 pb-3" id="viewProfileTab" 
                 style="min-height: 50px; background-color: white; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 2px 3px 0px;">
-                <div class="col">
+                <div class="col" >
                     <div class="row" style="height: 60px; overflow: hidden;">
                         <img src="{% static 'network/images/background.jpg' %}" alt="" style="width: 102%; object-fit: cover;">
                     </div>
@@ -135,20 +135,20 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7" style="font-size: 0.95rem">
+        <div class="col-md-7 px-0 px-md-3" style="font-size: 0.95rem" >
             <div id="postsDisplay">
                 {% for post in page_obj %}
                 <div class="d-flex py-3 mb-3 postContainer" id="postContainer-{{post.id}}">
                     <div class="col">
                         <div class="row">
-                            <div class="col-1">
+                            <div class="col-1 px-2 px-sm-3">
                                 {% if post.user.profilePic %}
                                 <img class="postProfilePicSmall" src="{{post.user.profilePic.url}}" alt="profile-pic">
                                 {% else %}
                                 <img class="postProfilePicSmall" src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic">
                                 {% endif %}
                             </div>
-                            <div class="col-11 pl-2 align-self-end">
+                            <div class="col-11 pl-4 pl-sm-3 pl-md-1 pl-lg-3 align-self-end">
                                 <span style="font-size: 1.05rem;" id="postUser-{{post.id}}" style="display: inline-block;">
                                     <a href="{% url 'profile' post.user %}"
                                         class="userProfileLink">{{post.user|capfirst}}</a>
@@ -196,7 +196,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-1 align-self-center justify-content-center inputProfilePicContainer">
+                            <div class="col-sm-1 col-2 align-self-center justify-content-center inputProfilePicContainer">
                                 {% if request.user.profilePic %}
                                 <img class="postProfilePicSmall" width="30" height="30"
                                     src="{{request.user.profilePic.url}}" alt="profile-pic">
@@ -206,7 +206,7 @@
                                     alt="profile-pic">
                                 {% endif %}
                             </div>
-                            <div class="col-11 my-3">
+                            <div class="col-sm-11 col-10 my-3 pl-0 pl-sm-3 pl-md-1 pl-lg-3">
                                 {% csrf_token %}
                                 <input class="comment" data-postID="{{post.id}}" type="text" placeholder="Write a comment..." id="commentInput-{{post.id}}" >
                             </div>
@@ -215,7 +215,7 @@
                         <div class="commentsDisplay" id="commentsDisplay-{{post.id}}">
                             {% for comment in post.comments %}
                             <div class="row my-3 " id="commentContainer-{{comment.id}}">
-                                <div class="col-1">
+                                <div class="col-sm-1 col-2">
                                     {% if comment.user.profilePic %}
                                     <img src="{{comment.user.profilePic.url}}" alt="profile-pic"
                                         class="commentProfilePicSmall">
@@ -224,7 +224,7 @@
                                         class="commentProfilePicSmall">
                                     {% endif %}
                                 </div>
-                                <div class="col-11">
+                                <div class="col-sm-11 col-10 pl-0 pl-sm-3 pl-md-1 pl-lg-3">
                                     <div class="commentContainer px-3 pt-2">
                                         <div class="row">
                                         
@@ -320,7 +320,7 @@
                     {% for profile in pYouMayKnow %}
                     <div class="suggestedUsers mb-2">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-3 col-sm-2 col-lg-3">
                                 {% if profile.profilePic %}
                                 <img src="{{ profile.profilePic.url }}" alt="profile-pic" class="pYouMayKnowPic">
                                 {% else %}
@@ -328,7 +328,7 @@
                                     class="pYouMayKnowPic">
                                 {% endif %}
                             </div>
-                            <div class="col-9 pr-0">
+                            <div class="col-9 col-sm-10 col-lg-9 pr-0">
                                 <div><a href="{% url 'profile' profile.username %}"> {{profile.first_name}}
                                         {{profile.last_name}} </a></div>
                                 <div style="font-size: 0.9rem; margin-top: -1px; color: darkgrey">{{profile.username}}
@@ -340,31 +340,6 @@
                     {% endfor %}
                 </div>
             </div>
-
-            <!-- <div class="row p-2 mb-4" id="pAlsoViewedTab">
-                <div class="col">
-                    <div id="pAlsoViewed">People Also Viewed</div>
-                    {% for profile in pAlsoViewed %}
-                    <div class="suggestedUsers mb-2">
-                        <div class="row">
-                            <div class="col-3">
-                                <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                    style="object-fit: contain; width: 53px; border-radius: 50px; margin-right: 10px"
-                                    class="commentProfilePic">
-                            </div>
-                            <div class="col-9 pr-0">
-                                <div><a href="{% url 'profile' profile.username %}"> {{profile.first_name}}
-                                        {{profile.last_name}} </a></div>
-                                <div style="font-size: 0.9rem; margin-top: -1px; color: darkgrey">{{profile.username}}
-                                </div>
-                                <hr>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div> -->
-
 
         </div>
     </div>

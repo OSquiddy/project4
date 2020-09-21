@@ -78,10 +78,10 @@ function submitPost() {
             <div class="d-flex border border-alert py-3 my-3 postContainer" id="postContainer-${post.id}">
                 <div class="col">
                     <div class="row">
-                    <div class="col-1">
+                    <div class="col-1  px-2 px-sm-3">
                         <img src="${commentProfilePic}" id="commentProfilePic" class="postProfilePicSmall" alt="profile-pic">
                     </div>
-                    <div class="col-11 pl-2 align-self-end">
+                    <div class="col-11 pl-4 pl-sm-3 pl-md-1 pl-lg-3 align-self-end">
                         <span style="font-size: 1.05rem;" id="postUser-${post.id}" style="display: inline-block;">
                             <a href="${userProfileLink}">
                             ${post.user.username.charAt(0).toUpperCase() + post.user.username.slice(1)}
@@ -112,7 +112,7 @@ function submitPost() {
                     <div class="numComments" data-numComments="${post.numComments}" id="postComments-${post.id}" data-postID="${post.id}" data-item="post" style="display: block;">${post.numComments} comments</div>
                 </div>
                 <div class="row postOptionRow" id="optionRow-${post.id}">
-                    <span class="options flex-fill text-center likeButton ml-3" id="newLikeButton" data-item="post" data-id="post-${post.id}">
+                    <span class="options flex-fill text-center likeButton" id="newLikeButton" data-item="post" data-id="post-${post.id}">
                         <i class="far fa-thumbs-up"></i> Like</span>
                     <span class="options flex-fill text-center" data-id="${post.id}" id="newCommentButton" onclick="focusComment(this);"><i class="far fa-comment"></i>
                         Comment</span>
@@ -120,12 +120,12 @@ function submitPost() {
                 </div>
 
                 <div class="row">
-                        <div class="col-1 align-self-center justify-content-center inputProfileContainer">
+                        <div class="col-sm-1 col-2 align-self-center justify-content-center inputProfileContainer">
                             <img class="postProfilePicSmall"
                             src="${commentProfilePic}"
                             alt="profile-pic">
                         </div>
-                        <div class="col-11 my-3">
+                        <div class="col-sm-11 col-10 my-3 pl-0 pl-sm-3 pl-md-1 pl-lg-3">
                             <input class="comment" data-postID="${post.id}" type="text" id="commentInput-${post.id}" placeholder="Write a comment..." >
                         </div>
                     </div>
@@ -219,7 +219,6 @@ function follow() {
 
 
 function edit(post) {
-    console.log("entered edit()");
     const content = document.querySelector(`#${post.dataset.id}`).innerHTML;
     const item = post.dataset.item;
     let id = 0;
@@ -232,6 +231,7 @@ function edit(post) {
     console.log(content);
     document.querySelector(`#${post.dataset.id}`).parentElement.innerHTML = `
         <textarea id="edit-${post.dataset.id}" style="width:100%; margin: 10px 0; padding: 5px" rows="2" onfocus="var value = this.value.trim(); this.value = null; this.value = value;" autofocus>${content}</textarea>
+        <div id="editOptionRow" class="d-flex justify-contents-end mb-2"></div>
         `
 
     let newPostButton = document.createElement('button');
@@ -239,14 +239,14 @@ function edit(post) {
     newPostButton.className = 'btn btn-primary ml-auto';
     newPostButton.style.display = 'inline-float';
     newPostButton.id = `newPostButton-${id}`;
-    document.querySelector(`#optionRow-${id}`).append(newPostButton);
+    document.querySelector(`#editOptionRow`).append(newPostButton);
 
     let cancelButton = document.createElement('button');
     cancelButton.innerHTML = 'Cancel';
-    cancelButton.className = 'btn btn-light border boder-alert ml-1 mr-3';
+    cancelButton.className = 'btn btn-light border boder-alert ml-1';
     cancelButton.style.display = 'inline-float';
     cancelButton.id = `cancelButton-${id}`;
-    document.querySelector(`#optionRow-${id}`).append(cancelButton);
+    document.querySelector(`#editOptionRow`).append(cancelButton);
 
 
     newPostButton.onclick = () => {
@@ -411,10 +411,10 @@ function postComment(commentBox) {
             const commentContainer = document.querySelector(`#commentsDisplay-${postID}`);
             commentContainer.insertAdjacentHTML('afterbegin', `
             <div class="row my-3" id="commentContainer-${comment.id}">
-                    <div class="col-1">
+                    <div class="col-sm-1 col-2">
                         <img src="${img}" alt="profile-pic" class="commentProfilePicSmall">
                     </div>
-                    <div class="col-11">
+                    <div class="col-sm-11 col-10 pl-0 pl-sm-3 pl-md-1 pl-lg-3">
                         <div class="commentContainer px-3 pt-2">
                             <div class="row">
                                 <div class="col align-self-end">
@@ -447,11 +447,11 @@ function postComment(commentBox) {
                             </div>
                         </div>
                         <div class="row commentOptionRow" id="optionRow-${comment.id}">
-                            <span class="options-comment likeButton ml-3" data-id="comment-${comment.id}" data-item="comment" onclick="like(this);"> Like </span>
+                            <span class="options-comment likeButton" data-id="comment-${comment.id}" data-item="comment" onclick="like(this);"> Like </span>
 
-                            <i id="commentLikeIcon-${comment.id}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;"></i>
+                            <i id="commentLikeIcon-${comment.id}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;" ></i>
 
-                            <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="${comment.likes}" data-id="${comment.id}" data-type="comment" id="commentLikes-${comment.id}" onclick="showLikesModal(this)"> ${comment.likes}
+                            <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="${comment.likes}" data-id="${comment.id}" data-type="comment" id="commentLikes-${comment.id}" data-item="comment" onclick="showLikesModal(this)"> ${comment.likes}
                             </span>
 
                             <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>

@@ -4,6 +4,7 @@
 
 <head>
     <title>Register</title>
+    <meta name="viewport" content="width= device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link href="{% static 'network/styles.css' %}" rel="stylesheet">
@@ -13,7 +14,7 @@
     <div class="container p-0" style="height: 100vh; max-width: 100%;">
         <div class="row m-0" style="height: 100%; width: 100%;">
             <!-- <div class="col-12" style="background-color: #5372f8;"></div> -->
-            <div class="col-4 align-self-center register-form ">
+            <div class="col-8 col-sm-6 col-md-5 col-lg-4 align-self-center register-form ">
                 <div class="row-col">
                     <h2 class="text-center" style="font-weight: 400">Register</h2>
 
@@ -23,7 +24,7 @@
 
                     <form action="{% url 'register' %}" method="post" id="register-form">
                         {% csrf_token %}
-                        <div class="form-page">
+                        <div class="form-page" id="form-page-1">
                             <div class="form-row">
                                 <div class="form-group col">
                                     <label for="first-name">First Name</label>
@@ -31,28 +32,27 @@
                                 </div>
                                 <div class="form-group col">
                                     <label for="last-name">Last Name</label>
-                                    <input class="form-control" autofocus type="text" name="last_name">
+                                    <input class="form-control" type="text" name="last_name">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="username">Username</label>
-                                <input class="form-control" type="text" name="username" placeholder="Username">
+                                <input class="form-control" type="text" name="username">
                             </div>
                             <button class="btn btn-primary" type="button" value="Next" id="nextButton">Next</button>
                         </div>
-                        <div class="form-page">
+                        <div class="form-page" id="form-page-2">
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input class="form-control" type="email" name="email" placeholder="Email Address">
+                                <input class="form-control" type="email" name="email">
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input class="form-control" type="password" name="password" placeholder="Password">
+                                <input class="form-control" type="password" name="password" >
                             </div>
                             <div class="form-group">
                                 <label for="confirmation">Confirm Password</label>
-                                <input class="form-control" type="password" name="confirmation"
-                                    placeholder="Confirm Password">
+                                <input class="form-control" type="password" name="confirmation">
                             </div>
                             <button class="btn btn-primary" type="button" value="Back" id="backButton">Back</button>
                             <input class="btn btn-primary" type="submit" value="Register" id="register">
@@ -71,21 +71,26 @@
     </div>
     <script>
         const slideForm = document.querySelector('#register-form');
+        const page1 = document.querySelector('#form-page-1');
+        const page2 = document.querySelector('#form-page-2');
         const formContainer = document.querySelector('.register-form');
         const registerFooter = document.querySelector('.register-footer');
         const nextButton = document.querySelector('#nextButton');
         nextButton.onclick = function leftSlide() {
+            page2.style.display = 'block';
             slideForm.style.marginLeft = "-100%";
-            formContainer.style.height = '76.5%';
-            registerFooter.style.marginTop = "0";
+            // formContainer.style.height = '76.5%';
+            // registerFooter.style.marginTop = "0";
             // slidePage.style.marginRight = "50%";
         }
 
         const backButton = document.querySelector('#backButton');
         backButton.onclick = function rightSlide() {
+            page1.style.display = 'block';
             slideForm.style.marginLeft = "0";
-            formContainer.style.height = '65.9%';
-            registerFooter.style.marginTop = "-15%";
+            page2.style.display = 'none';
+            // formContainer.style.height = '65.9%';
+            // registerFooter.style.marginTop = "-15%";
             
         }
     </script>

@@ -116,11 +116,11 @@ def followingPage(request, username):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     x = defaultdict()
+    if len(postsList) == 0:
+        return HttpResponseRedirect(reverse('index'))
     for post in postsList:
         d = post.serialize()
         # x[d["id"]].append(d["likers"])
-    print(x)
-    print("\n\n", d)
     # Randomly selected profiles
     pYouMayKnow = utils.getRandomProfiles(user)
     pAlsoViewed = utils.getRandomProfiles(user)
