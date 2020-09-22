@@ -294,17 +294,16 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="uploadImageButton">
                             <span class="dropdown-item" data-toggle="modal"
                                 data-target="#uploadImageModal">Upload</span>
-                            <!-- <a href="{% url 'uploadImage' %}" class="dropdown-item">Upload</a> -->
                             <span class="dropdown-item" id="deleteProfilePic" onclick="deleteProfilePic();">Delete</span>
                         </div>
                         <!-- <i class="fas fa-caret-down"></i> -->
                         {% else %}
                         {% if followedStatus %}
-                        <button class="btn btn-primary" id="followButton">Unfollow</button>
+                        <button class="btn btn-primary" id="followButton2" onclick="follow();">Unfollow</button>
                         {% else %}
-                        <button class="btn btn-primary" id="followButton">Follow</button>
+                        <button class="btn btn-primary" id="followButton2" onclick="follow();"">Follow</button>
                         {% endif %}
-                        <button class="btn btn-light border border-alert">Message</button>
+                        <button class="btn btn-light border border-alert ml-2">Message</button>
                         {% endif %}
                     </div>
                 </div>

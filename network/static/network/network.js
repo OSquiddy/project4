@@ -181,6 +181,7 @@ function follow() {
             if (result.message === 'Followed successfully') {
                 if (buttonValue === 'Follow') {
                     document.querySelector('#followButton').innerHTML = 'Unfollow';
+                    document.querySelector('#followButton2').innerHTML = 'Unfollow';
                     let followerCount = document.querySelector('#followerCount').innerHTML;
                     followerCount++;
                     document.querySelector('#followerCount').innerHTML = followerCount;
@@ -201,6 +202,7 @@ function follow() {
             else if (result.message === 'Unfollowed successfully') {
                 if (buttonValue === 'Unfollow') {
                     document.querySelector('#followButton').innerHTML = 'Follow';
+                    document.querySelector('#followButton2').innerHTML = 'Follow';
                     let followerCount = document.querySelector('#followerCount').innerHTML;
                     followerCount--;
                     document.querySelector('#followerCount').innerHTML = followerCount;
