@@ -108,8 +108,8 @@ function submitPost() {
                     </div>
                 </div>
                 <div class="metaInfoRow d-flex justify-content-between">
-                    <div class="numLikes" data-numLikes="${post.likes}" id="postLikes-${post.id}" data-id="${post.id}" data-item="post" style="display: none" onclick="showLikesModal(this);">${post.likes} likes </div>
-                    <div class="numComments" data-numComments="${post.numComments}" id="postComments-${post.id}" data-postID="${post.id}" data-item="post" style="display: block;">${post.numComments} comments</div>
+                    <div class="numLikes noSelect" data-numLikes="${post.likes}" id="postLikes-${post.id}" data-id="${post.id}" data-item="post" style="display: none" onclick="showLikesModal(this);">${post.likes} likes </div>
+                    <div class="numComments noSelect" data-numComments="${post.numComments}" id="postComments-${post.id}" data-postID="${post.id}" data-item="post" style="display: block;">${post.numComments} comments</div>
                 </div>
                 <div class="row postOptionRow" id="optionRow-${post.id}">
                     <span class="options flex-fill text-center likeButton" id="newLikeButton" data-item="post" data-id="post-${post.id}">
@@ -306,7 +306,10 @@ function like(post) {
                 document.querySelector(`#postLikes-${id}`).style.display = 'block';
             numLikes = parseInt(document.querySelector(`#postLikes-${id}`).dataset.numlikes);
             numLikes += 1;
-            document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} likes`;
+            if (numLikes == 1)
+                document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} like`;
+            else
+                document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} likes`;
             document.querySelector(`#postLikes-${id}`).dataset.numlikes = numLikes;
         }
         else if (item == 'comment') {
@@ -316,7 +319,7 @@ function like(post) {
             }
             numLikes = parseInt(document.querySelector(`#commentLikes-${id}`).dataset.numlikes);
             numLikes += 1;
-            document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes} likes`;
+            document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes}`;
             document.querySelector(`#commentLikes-${id}`).dataset.numlikes = numLikes;
         }
 
@@ -346,7 +349,10 @@ function like(post) {
             numLikes--;
             if (numLikes === 0)
                 document.querySelector(`#postLikes-${id}`).style.display = 'none';
-            document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} likes`;
+            else if (numLikes == 1)
+                document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} like`;
+            else
+                document.querySelector(`#postLikes-${id}`).innerHTML = `${numLikes} likes`;
             document.querySelector(`#postLikes-${id}`).dataset.numlikes = numLikes;
 
         }
@@ -357,7 +363,7 @@ function like(post) {
                 document.querySelector(`#commentLikeIcon-${id}`).style.display = 'none';
                 document.querySelector(`#commentLikes-${id}`).style.display = 'none';
             }
-            document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes} likes`;
+            document.querySelector(`#commentLikes-${id}`).innerHTML = `${numLikes}`;
             document.querySelector(`#commentLikes-${id}`).dataset.numlikes = numLikes;
 
         }
@@ -451,12 +457,12 @@ function postComment(commentBox) {
 
                             <i id="commentLikeIcon-${comment.id}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;" ></i>
 
-                            <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="${comment.likes}" data-id="${comment.id}" data-type="comment" id="commentLikes-${comment.id}" data-item="comment" onclick="showLikesModal(this)"> ${comment.likes}
+                            <span class="numLikes noSelect align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="${comment.likes}" data-id="${comment.id}" data-type="comment" id="commentLikes-${comment.id}" data-item="comment" onclick="showLikesModal(this)"> 
                             </span>
 
                             <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>
 
-                            <span class="options-comment" data-id="comment-${comment.id}"><i class="far fa-comment"></i> Reply</span>
+                            <span class="options-comment" data-id="comment-${comment.id}" data-toggle="modal" data-target="#replyModal"><i class="far fa-comment"></i> Reply</span>
                         </div>
                     </div>
             </div>
@@ -606,13 +612,16 @@ function description() {
                     document.querySelector('#description').innerHTML = result.description;
                     document.querySelector(`#descriptionContainer-${id}`).style.display = 'none';
                     document.querySelector('#descriptionButton').innerText = 'Add a description';
-                    if (document.querySelector('#descriptionButton').style.display === 'none')
+                    if (document.querySelector('#descriptionButton').style.display === 'none') {
                         document.querySelector('#descriptionButton').style.display = 'inline-block';
+                        document.querySelector('#descriptionButton2').style.display = 'inline-block';
+                    }
                 }
                 else {
                     document.querySelector('#description').innerHTML = result.description;
                     document.querySelector('#editDescription').style.display = 'flex';
                     document.querySelector('#descriptionButton').style.display = "none";
+                    document.querySelector('#descriptionButton2').style.display = 'none';
                 }
 
             })

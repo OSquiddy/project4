@@ -10,7 +10,7 @@ class User(AbstractUser):
     followers = models.ManyToManyField('self', blank=True, related_name="followersList", symmetrical=False)
     following = models.ManyToManyField('self', blank=True, related_name="followingList", symmetrical=False)
     profilePic = models.ImageField(upload_to=new_filename, storage=OverwriteStorage(), null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, default="")
     
     def getProfileURL(self):
         if self.profilePic and hasattr(self.profilePic, 'url'):

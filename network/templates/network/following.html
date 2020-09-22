@@ -95,6 +95,26 @@
     </div>
 </div>
 
+<!-- Reply Modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">Reply</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="likersModalBody">
+                This feature is not yet available.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Main Body -->
 <div class="container" id="BodyContainer">
     <div class="row p-0 mt-lg-5 mt-0">
@@ -178,8 +198,8 @@
                         </div>
                         
                         <div class="metaInfoRow d-flex justify-content-between">
-                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post"> {{post.allLikes|length}} likes </div>
-                            <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="comment">{{post.comments|length}} comments</div>
+                            <div class="numLikes noSelect" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post"> {{post.allLikes|length}} {% if post.allLikes|length != 1 %} likes {% else %} like {% endif %} </div>
+                            <div class="numComments noSelect" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="comment">{{post.comments|length}} {% if post.comments|length != 1 %} comments {% else %} comment {% endif %}</div>
                         </div>
                         
                         <div class="row postOptionRow" id="optionRow-{{post.id}}">
@@ -275,11 +295,11 @@
                                         {% else %}
                                         <i id="commentLikeIcon-{{comment.id}}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;"></i>
                                         {% endif %}
-                                        <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="{{comment.allLikes|length}}"
+                                        <span class="numLikes noSelect align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="{{comment.allLikes|length}}"
                                             data-id="{{comment.id}}" data-item="comment" id="commentLikes-{{comment.id}}"> {{comment.allLikes|length}}
                                         </span>
                                         <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>
-                                        <span class="options-comment" data-id="comment-{{comment.id}}"><i
+                                        <span class="options-comment" data-id="comment-{{comment.id}}" data-toggle="modal" data-target="#replyModal"><i
                                                 class="far fa-comment"></i>
                                             Reply</span>
                                     </div>

@@ -6,6 +6,7 @@ from .models import User, Post, Comment
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['username', 'email', 'first_name', 'last_name', 'password']
+    filter_horizontal = ['followers', 'following']
     
 class PostAdmin(admin.ModelAdmin):
     list_display = ['user', 'content', 'time']

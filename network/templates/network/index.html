@@ -94,6 +94,25 @@
     </div>
 </div>
 
+<!-- Reply Modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">Reply</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="likersModalBody">
+                This feature is not yet available.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border border-alert" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Main Body -->
 <div class="container" id="BodyContainer">
@@ -134,31 +153,6 @@
                     </a>
                 </div>
             </div>
-
-            <!-- <div class="row p-1 mb-4" id="pAlsoViewedTab">
-                <div class="col">
-                    <div id="pAlsoViewed" style="font-size: 1rem;">People You May Know</div>
-                    {% for profile in pAlsoViewed %}
-                    <div class="suggestedUsers mb-2">
-                        <div class="row">
-                            <div class="col-3">
-                                <img src="{% static 'network/images/defaultAvatar.png' %}" alt="profile-pic"
-                                    style="object-fit: contain; width: 35px; border-radius: 50px; margin-right: 10px"
-                                    class="commentProfilePic">
-                            </div>
-                            <div class="col-9 pr-0">
-                                <div><a href="{% url 'profile' profile.username %}"> {{profile.first_name}}
-                                        {{profile.last_name}} </a></div>
-                                <div style="font-size: 0.9rem; margin-top: -1px; color: darkgrey">{{profile.username}}
-                                </div>
-                                <hr>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div> -->
-
 
         </div>
         <div class="col-lg-7 px-0 px-md-3" style="font-size: 0.95rem" >
@@ -216,8 +210,8 @@
                             </div>
                         </div>
                         <div class="metaInfoRow d-flex justify-content-between">
-                            <div class="numLikes" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post"> {{post.allLikes|length}} likes </div>
-                            <div class="numComments" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="post">{{post.comments|length}} comments</div>
+                            <div class="numLikes noSelect" data-numLikes="{{post.allLikes|length}}" id="postLikes-{{post.id}}" data-id="{{post.id}}" data-item="post"> {{post.allLikes|length}} {% if post.allLikes|length != 1 %} likes {% else %} like {% endif %} </div>
+                            <div class="numComments noSelect" data-numComments="{{post.comments|length}}" id="postComments-{{post.id}}" data-postID="{{post.id}}" data-item="post">{{post.comments|length}} {% if post.comments|length != 1 %} comments {% else %} comment {% endif %}</div>
                         </div>
                         <div class="row postOptionRow " id="optionRow-{{post.id}}">
                             {% if request.user.username in post.allLikes %}
@@ -312,12 +306,11 @@
                                         {% else %}
                                         <i id="commentLikeIcon-{{comment.id}}" class="far fa-thumbs-up align-self-center mr-1" style="color:#007bff; font-size: 0.775rem; display: none;"></i>
                                         {% endif %}
-                                        <span class="numLikes align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="{{comment.allLikes|length}}"
-                                            data-id="{{comment.id}}" data-item="comment" id="commentLikes-{{comment.id}}">
+                                        <span class="numLikes noSelect align-self-center pr-2" style="font-size: 0.775rem;" data-numLikes="{{comment.allLikes|length}}" data-id="{{comment.id}}" data-item="comment" id="commentLikes-{{comment.id}}">
                                             {{comment.allLikes|length}}
                                         </span>
                                         <span style="width: 1px; background-color: grey; margin: 7px 0;"></span>
-                                        <span class="options-comment" data-id="comment-{{comment.id}}"><i
+                                        <span class="options-comment" data-id="comment-{{comment.id}}" data-toggle="modal" data-target="#replyModal"><i
                                                 class="far fa-comment"></i>
                                             Reply</span>
                                     </div>

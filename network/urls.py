@@ -8,7 +8,7 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("<slug:username>/following", views.followingPage, name="following"),
+    path("<str:username>/following", views.followingPage, name="following"),
     path("upload", views.uploadPage, name="uploadImage"),
     
     
@@ -24,6 +24,6 @@ urlpatterns = [
     path("g/likers/<int:id>/i=<str:item>", views.getLikers),
     
     # Check last
-    path("<slug:name>", views.profile, name="profile"),
+    path("<str:name>", views.profile, name="profile"),
 ]
 
