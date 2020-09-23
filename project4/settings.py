@@ -132,4 +132,4 @@ STATIC_URL = '/static/'
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'network/static/network/users/images') 
 MEDIA_URL = '/media/'
 
-SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = True

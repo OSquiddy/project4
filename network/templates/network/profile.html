@@ -250,7 +250,11 @@
                         <div class="align-self-end ml-auto mt-2 mt-lg-0 d-none d-sm-flex">
                             {% csrf_token %}
                             {% if profile == request.user %}
+                            {% if description == "" %}
                             <button class="btn btn-primary" id="descriptionButton" data-id={{profile.id}} style="padding: 4px 8px;"> Add a description </button>
+                            {% else %}
+                            <button class="btn btn-primary" id="descriptionButton" data-id={{profile.id}} style="padding: 4px 8px; display: none;"> Add a description </button>
+                            {% endif %}
                             <button class="btn btn-light border border-alert dropdown dropdown-toggle" type="button"
                                 id="uploadImageButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false" style="padding: 4px 8px;">
@@ -321,13 +325,15 @@
                     <div class="col description">
                         <div class="d-flex">
                             <div class="d-inline-flex pt-1 postHeading">About</div>
-                            {% if profile.description == "" && profile == request.user %}
+                            {% if profile == request.user %}
+                            {% if profile.description == "" %}
                             <div class="btn ml-auto " id="editDescription" style="display: none;"><i
                                     class="fas fa-pen"></i> </div>
                             {% else %}
                             <div class="btn ml-auto " id="editDescription" style="display: inline-flex"><i
                                     class="fas fa-pen"></i>
                             </div>
+                            {% endif %}
                             {% endif %}
                         </div>
                         <div class="col mt-3" id="description">{{profile.description}}</div>
