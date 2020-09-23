@@ -250,7 +250,7 @@
                         <div class="align-self-end ml-auto mt-2 mt-lg-0 d-none d-sm-flex">
                             {% csrf_token %}
                             {% if profile == request.user %}
-                            {% if description == "" %}
+                            {% if profile.description == "" %}
                             <button class="btn btn-primary" id="descriptionButton" data-id={{profile.id}} style="padding: 4px 8px;"> Add a description </button>
                             {% else %}
                             <button class="btn btn-primary" id="descriptionButton" data-id={{profile.id}} style="padding: 4px 8px; display: none;"> Add a description </button>
@@ -394,6 +394,7 @@
                                                 <a href="{% url 'profile' post.user %}"
                                                     class="userProfileLink">{{post.user|capfirst}}</a>
                                             </span>
+                                            {% if post.user == request.user %}
                                             <div class="dropdown d-inline-flex" style=" float:right">
                                                 <button class="btn" type="button" id="dropdownMenuButton"
                                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -409,6 +410,7 @@
                                                             class="fas fa-times"></i>&nbsp;&nbsp;Delete</span>
                                                 </div>
                                             </div>
+                                            {% endif %}
                                             <div class="postTime">{{post.time|date:"j-m-Y"}}, {{post.time|time:"P"|upper}}</div>
                                         </div>
                                     </div>
@@ -558,19 +560,20 @@
                 <nav aria-label="page navigation">
                     <ul class="pagination justify-content-center">
                         {% if page_obj.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+                        <!-- <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li> -->
                         <li class="page-item"><a class="page-link"
-                                href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                                href="?page={{ page_obj.previous_page_number }}">&#8249;</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link">&#8249;</a></li>
                         {% endif %}
-                        {% for page_number in page_obj.paginator.page_range %}
-                        <li class="page-item"><a class="page-link" href="?page={{page_number}}">{{page_number}}</a></li>
-                        {% endfor %}
+                        <li class="page-item"><a class="page-link" href="?page={{page_number}}">{{page_obj.number}}</a></li>
                         {% if page_obj.has_next %}
-                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                        <li class="page-item"><a class="page-link"
-                                href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&#8250;</a>
+                        <!-- <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a></li> -->
+                        {% else %}
+                        <li class="page-item"><a class="page-link">&#8250;</a>
                         {% endif %}
-
+    
                         </li>
                     </ul>
                 </nav>

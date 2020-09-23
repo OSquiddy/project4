@@ -64,7 +64,7 @@ def profile(request, name):
     except User.DoesNotExist:
         pass
     # All posts by the profile
-    postsList = Post.objects.filter(user=profile.id)
+    postsList = Post.objects.filter(user=profile.id).order_by("-time")
     paginator = Paginator(postsList, 10)
     page_number =  request.GET.get('page')
     page_obj = paginator.get_page(page_number)
