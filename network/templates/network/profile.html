@@ -321,7 +321,7 @@
                     <div class="col description">
                         <div class="d-flex">
                             <div class="d-inline-flex pt-1 postHeading">About</div>
-                            {% if profile.description == "" %}
+                            {% if profile.description == "" && profile == request.user %}
                             <div class="btn ml-auto " id="editDescription" style="display: none;"><i
                                     class="fas fa-pen"></i> </div>
                             {% else %}
