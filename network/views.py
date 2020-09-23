@@ -33,9 +33,9 @@ def index(request):
         print("POST request has been called")
         data = json.loads(request.body)
         content = data.get("content","")
-        utils.createPost(user, content)
+        post = utils.createPost(user, content)
         return JsonResponse({"message" : "Comment created",
-                             "posts" : [post.serialize() for post in postsList]
+                             "post" : post.serialize(),
                              }, status=200, safe=False)
     return render(request, "network/index.html", {
         "postsList" : postsList,

@@ -67,10 +67,10 @@ function submitPost() {
         .then(result => {
 
             //Print the result
-            console.log(result)
-            let post = result.posts[0]
-            let commentProfilePic = post.user.profilePic
-            let userProfileLink = document.querySelector('.userProfileLink').href
+            console.log(result);
+            let post = result.post;
+            let commentProfilePic = post.user.profilePic;
+            let userProfileLink = document.querySelector('.userProfileLink').href;
             //try using django templating system in javascript
             document.querySelector('#postsDisplay').insertAdjacentHTML('afterbegin', `
             <div class="d-flex border border-alert py-3 my-3 postContainer" id="postContainer-${post.id}">

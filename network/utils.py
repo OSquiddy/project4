@@ -4,6 +4,7 @@ import random
 def createPost(user, content):
     post = Post.objects.create(user=user, content=content)
     post.save()
+    return post
     
 def sortByTime(postsList):
     postsList.sort(key=returnTime, reverse=True)
