@@ -186,7 +186,6 @@
                                     <a href="{% url 'profile' post.user %}"
                                         class="userProfileLink">{{post.user|capfirst}}</a>
                                 </span>
-                                
                                 {% if post.user == request.user %}
                                 <div class="dropdown d-inline-flex" style=" float:right">
                                     <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -202,6 +201,7 @@
                                     </div>
                                 </div>
                                 {% endif %}
+                                <div class="postTime">{{post.time|date:"j-m-Y"}}, {{post.time|time:"P"|upper}}</div>
                             </div>
                         </div>
                         <div class="row">

@@ -362,6 +362,11 @@ body {
     font-size : 1.25rem;
 }
 
+.postTime {
+    font-size: 0.825rem;
+    color: grey;
+}
+
 .noSelect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

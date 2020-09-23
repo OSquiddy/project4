@@ -46,8 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.numComments').forEach(post => post.onclick = function () { showComments(this) });
         document.querySelectorAll('.comment').forEach(post => post.onfocus = function () { showComments(this) });
     }
-
-
 })
 
 function submitPost() {
@@ -100,6 +98,7 @@ function submitPost() {
                                 </span>
                             </div>
                         </div>
+                        <div class="postTime">${post.time}</div>
                     </div>
                 </div>
                 <div class="row">

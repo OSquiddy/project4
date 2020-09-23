@@ -68,7 +68,7 @@ class Post(models.Model):
             "content" : self.content,
             "likes" : len(self.allLikes()),
             "likers" : [user.serialize() for user in self.likes.all()],
-            "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
+            "time" : self.time.strftime("%d-%m-%Y, %I:%M %p"),
             "numComments" : len(self.comments())
         }
         
